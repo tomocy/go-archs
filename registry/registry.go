@@ -22,8 +22,12 @@ type registry struct {
 
 func NewRegistry() Registry {
 	registry := new(registry)
-	registry.userRepository = registry.newUserRepository()
+	registry.initRepositories()
 	return registry
+}
+
+func (r *registry) initRepositories() {
+	r.userRepository = r.newUserRepository()
 }
 
 func (r registry) NewHandler() handler.Handler {
