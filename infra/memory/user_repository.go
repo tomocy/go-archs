@@ -2,7 +2,6 @@ package memory
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/repository"
@@ -34,6 +33,5 @@ func (r userRepository) FindByEmail(email string) (*model.User, error) {
 
 func (r *userRepository) Save(user *model.User) error {
 	r.users = append(r.users, user)
-	log.Println(r.users)
 	return nil
 }

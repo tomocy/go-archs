@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
@@ -30,12 +29,11 @@ func (h userHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := h.controller.RegisterUser(validated.Email, validated.Password)
+	user, err := h.controller.RegisterUser(validated.Email, validated.Password)
 	if err != nil {
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintf(w, "register user: {id: %s, email: %s}\n", resp.ID, resp.Email)
+	fmt.Fprintf(w, "register user: {id: %s, email: %s}\n", user.ID, user.Email)
 }
