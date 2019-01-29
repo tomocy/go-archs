@@ -9,14 +9,13 @@ import (
 	"github.com/tomocy/archs/usecase/request"
 )
 
-var usecase = NewUserUsecase(
-	memory.UserRepository,
-	service.NewUserService(memory.UserRepository, new(mockHashService)),
-	new(mockHashService),
-	new(mockSessionService),
-)
-
 func TestRegisterUser(t *testing.T) {
+	repo := memory.NewUserRepository()
+	usecase := NewUserUsecase(
+		repo,
+		service.NewUserService(repo, new(mockHashService)),
+		new(mockHashService),
+	)
 	email := "test@test.com"
 	password := "plain"
 	test := struct {
@@ -42,7 +41,7 @@ func TestRegisterUser(t *testing.T) {
 		{
 			"duplicated email",
 			func(t *testing.T) {
-				memory.UserRepository.Save(model.NewUser(email, password))
+				repo.Save(model.NewUser(email, password))
 				_, err := usecase.RegisterUser(test.cmd)
 				if !IsDuplicatedEmailError(err) {
 					t.Errorf("unexpected error: got %s, but expected DuplicatedEmailError", err)
@@ -55,45 +54,5 @@ func TestRegisterUser(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			test.tester(t)
 		})
-	}
-}
-
-func TestAuthenticateUser(t *testing.T) {
-	email := "test@test.com"
-	memory.UserRepository.Save(model.NewUser(email, mockHash))
-	test := struct {
-		cmd      *request.AuthenticateUserRequest
-		expected *model.User
-	}{
-		cmd:      request.NewAuthenticateUserRequest(nil, nil, email, mockPlain),
-		expected: model.NewUser(email, mockHash),
-	}
-	tests := []struct {
-		name   string
-		tester func(t *testing.T)
-	}{
-		{
-			"normal",
-			func(t *testing.T) {
-				_, err := usecase.AuthenticateUser(test.cmd)
-				if err != nil {
-					t.Errorf("unexpected error: %s", err)
-				}
-			},
-		},
-		{
-			"incorrent password",
-			func(t *testing.T) {
-				test.cmd.Password = ""
-				_, err := usecase.AuthenticateUser(test.cmd)
-				if !IsIncorrectCredentialError(err) {
-					t.Errorf("unexpected error: got %v, but expected IncorrectCredentialError\n", err)
-				}
-			},
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, test.tester)
 	}
 }

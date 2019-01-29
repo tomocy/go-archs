@@ -46,6 +46,13 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 		r.userRepository,
 		r.newUserService(),
 		r.newHashService(),
+	)
+}
+
+func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
+	return usecase.NewAuthenticationUsecase(
+		r.userRepository,
+		r.newHashService(),
 		r.newSessionService(),
 	)
 }
