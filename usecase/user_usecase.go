@@ -3,20 +3,19 @@ package usecase
 import (
 	"fmt"
 
+	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/usecase/request"
-	"github.com/tomocy/archs/usecase/response"
 )
 
 type UserUsecase interface {
-	RegisterUser(req *request.RegisterUserRequest) (*response.RegisterUserResponse, error)
-	AuthenticateUser(req *request.AuthenticateUserRequest) (*response.AuthenticateUserResponse, error)
+	RegisterUser(req *request.RegisterUserRequest) (*model.User, error)
+	AuthenticateUser(req *request.AuthenticateUserRequest) (*model.User, error)
 }
 
 type userUsecase struct {
 	repository     repository.UserRepository
-	responseWriter response.UserResponseWriter
 	userService    service.UserService
 	hashService    service.HashService
 	sessionService service.SessionService
@@ -24,21 +23,19 @@ type userUsecase struct {
 
 func NewUserUsecase(
 	repo repository.UserRepository,
-	w response.UserResponseWriter,
 	userService service.UserService,
 	hashService service.HashService,
 	sessService service.SessionService,
 ) UserUsecase {
 	return &userUsecase{
 		repository:     repo,
-		responseWriter: w,
 		userService:    userService,
 		hashService:    hashService,
 		sessionService: sessService,
 	}
 }
 
-func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*response.RegisterUserResponse, error) {
+func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*model.User, error) {
 	user, err := u.userService.RegisterUser(req.Email, req.Password)
 	if err != nil {
 		return nil, newDuplicatedEmailError(req.Email)
@@ -47,10 +44,10 @@ func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*response.R
 		return nil, fmt.Errorf("failed to register user: %s", err)
 	}
 
-	return u.responseWriter.WriteRegisterUserResponse(user)
+	return user, nil
 }
 
-func (u userUsecase) AuthenticateUser(req *request.AuthenticateUserRequest) (*response.AuthenticateUserResponse, error) {
+func (u userUsecase) AuthenticateUser(req *request.AuthenticateUserRequest) (*model.User, error) {
 	user, err := u.repository.FindByEmail(req.Email)
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate user: %s", err)
@@ -62,5 +59,5 @@ func (u userUsecase) AuthenticateUser(req *request.AuthenticateUserRequest) (*re
 		return nil, fmt.Errorf("failed to authenticate user: %s", err)
 	}
 
-	return u.responseWriter.WriteAuthenticateUserResponse(user)
+	return user, nil
 }

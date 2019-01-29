@@ -3,7 +3,6 @@ package usecase
 import (
 	"testing"
 
-	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/infra/memory"
@@ -12,7 +11,6 @@ import (
 
 var usecase = NewUserUsecase(
 	memory.UserRepository,
-	presenter.NewUserResponseWriter(),
 	service.NewUserService(memory.UserRepository, new(mockHashService)),
 	new(mockHashService),
 	new(mockSessionService),

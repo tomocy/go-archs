@@ -2,7 +2,6 @@ package registry
 
 import (
 	"github.com/tomocy/archs/adapter/controller"
-	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/infra/bcrypt"
@@ -10,7 +9,6 @@ import (
 	"github.com/tomocy/archs/infra/memory"
 	"github.com/tomocy/archs/infra/web/handler"
 	"github.com/tomocy/archs/usecase"
-	"github.com/tomocy/archs/usecase/response"
 )
 
 type Registry interface {
@@ -46,7 +44,6 @@ func (r registry) newUserController() controller.UserController {
 func (r registry) newUserUsecase() usecase.UserUsecase {
 	return usecase.NewUserUsecase(
 		r.userRepository,
-		r.newUserResponseWriter(),
 		r.newUserService(),
 		r.newHashService(),
 		r.newSessionService(),
@@ -55,10 +52,6 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 
 func (r registry) newUserRepository() repository.UserRepository {
 	return memory.UserRepository
-}
-
-func (r registry) newUserResponseWriter() response.UserResponseWriter {
-	return presenter.NewUserResponseWriter()
 }
 
 func (r registry) newUserService() service.UserService {
