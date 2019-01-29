@@ -10,9 +10,15 @@ import (
 	"github.com/tomocy/archs/usecase/request"
 )
 
+var usecase = NewUserUsecase(
+	memory.UserRepository,
+	presenter.NewUserResponseWriter(),
+	service.NewUserService(memory.UserRepository, new(mockHashService)),
+	new(mockHashService),
+	new(mockSessionService),
+)
+
 func TestRegisterUser(t *testing.T) {
-	repo := memory.NewUserRepository()
-	usecase := NewUserUsecase(repo, presenter.NewUserResponseWriter(), service.NewUserService(repo, new(mockHashService)), new(mockSessionService))
 	email := "test@test.com"
 	password := "plain"
 	test := struct {
@@ -38,7 +44,7 @@ func TestRegisterUser(t *testing.T) {
 		{
 			"duplicated email",
 			func(t *testing.T) {
-				repo.Save(model.NewUser(email, password))
+				memory.UserRepository.Save(model.NewUser(email, password))
 				_, err := usecase.RegisterUser(test.cmd)
 				if !IsDuplicatedEmailError(err) {
 					t.Errorf("unexpected error: got %s, but expected DuplicatedEmailError", err)
@@ -55,10 +61,8 @@ func TestRegisterUser(t *testing.T) {
 }
 
 func TestAuthenticateUser(t *testing.T) {
-	repo := memory.NewUserRepository()
-	usecase := NewUserUsecase(repo, presenter.NewUserResponseWriter(), service.NewUserService(repo, new(mockHashService)), new(mockSessionService))
 	email := "test@test.com"
-	repo.Save(model.NewUser(email, mockHash))
+	memory.UserRepository.Save(model.NewUser(email, mockHash))
 	test := struct {
 		cmd      *request.AuthenticateUserRequest
 		expected *model.User

@@ -9,7 +9,6 @@ import (
 
 type UserService interface {
 	RegisterUser(email, password string) (*model.User, error)
-	ComparePasswords(plain, hash string) error
 }
 
 type userService struct {
@@ -44,8 +43,4 @@ func (s userService) checkIfEmailIsUnique(email string) error {
 	}
 
 	return nil
-}
-
-func (s userService) ComparePasswords(plain, hash string) error {
-	return s.hashService.ComparePasswords(plain, hash)
 }

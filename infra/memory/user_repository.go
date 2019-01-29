@@ -8,12 +8,10 @@ import (
 	"github.com/tomocy/archs/domain/repository"
 )
 
+var UserRepository repository.UserRepository = new(userRepository)
+
 type userRepository struct {
 	users []*model.User
-}
-
-func NewUserRepository() repository.UserRepository {
-	return new(userRepository)
 }
 
 func (r userRepository) FindByEmail(email string) (*model.User, error) {

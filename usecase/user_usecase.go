@@ -17,21 +17,29 @@ type UserUsecase interface {
 type userUsecase struct {
 	repository     repository.UserRepository
 	responseWriter response.UserResponseWriter
-	service        service.UserService
+	userService    service.UserService
+	hashService    service.HashService
 	sessionService service.SessionService
 }
 
-func NewUserUsecase(repo repository.UserRepository, w response.UserResponseWriter, s service.UserService, sessService service.SessionService) UserUsecase {
+func NewUserUsecase(
+	repo repository.UserRepository,
+	w response.UserResponseWriter,
+	userService service.UserService,
+	hashService service.HashService,
+	sessService service.SessionService,
+) UserUsecase {
 	return &userUsecase{
 		repository:     repo,
 		responseWriter: w,
-		service:        s,
+		userService:    userService,
+		hashService:    hashService,
 		sessionService: sessService,
 	}
 }
 
 func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*response.RegisterUserResponse, error) {
-	user, err := u.service.RegisterUser(req.Email, req.Password)
+	user, err := u.userService.RegisterUser(req.Email, req.Password)
 	if err != nil {
 		return nil, newDuplicatedEmailError(req.Email)
 	}
@@ -47,7 +55,7 @@ func (u userUsecase) AuthenticateUser(req *request.AuthenticateUserRequest) (*re
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate user: %s", err)
 	}
-	if err := u.service.ComparePasswords(req.Password, user.Password); err != nil {
+	if err := u.hashService.ComparePasswords(req.Password, user.Password); err != nil {
 		return nil, newIncorrectCredentialError()
 	}
 	if err := u.sessionService.StoreAuthenticUser(req.ResponseWriter, req.Request, user); err != nil {

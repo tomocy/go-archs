@@ -6,8 +6,10 @@ import (
 )
 
 func NewHashService() service.HashService {
-	return newBcryptHashService()
+	return hashService
 }
+
+var hashService service.HashService = newBcryptHashService()
 
 type bcryptHashService struct {
 }
