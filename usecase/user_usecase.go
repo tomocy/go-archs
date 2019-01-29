@@ -30,7 +30,7 @@ func NewUserUsecase(repo repository.UserRepository, w response.UserResponseWrite
 func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*response.RegisterUserResponse, error) {
 	user, err := u.service.RegisterUser(req.Email, req.Password)
 	if err != nil {
-		return nil, fmt.Errorf("failed to register user: %s", err)
+		return nil, newDuplicatedEmailError(req.Email)
 	}
 	if err := u.repository.Save(user); err != nil {
 		return nil, fmt.Errorf("failed to register user: %s", err)
