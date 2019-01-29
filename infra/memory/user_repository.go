@@ -7,11 +7,11 @@ import (
 	"github.com/tomocy/archs/domain/repository"
 )
 
+var UserRepository repository.UserRepository = NewUserRepository()
+
 func NewUserRepository() repository.UserRepository {
 	return new(userRepository)
 }
-
-var UserRepository repository.UserRepository = new(userRepository)
 
 type userRepository struct {
 	users []*model.User
