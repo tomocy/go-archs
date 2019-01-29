@@ -33,11 +33,6 @@ func TestRegisterUser(t *testing.T) {
 				if err != nil {
 					t.Fatalf("unexpected error: %s\n", err)
 				}
-				actual, err := repo.FindByEmail(email)
-				if err != nil {
-					t.Fatalf("unexpected error: %s\n", err)
-				}
-				assertUser(t, actual, test.expected)
 			},
 		},
 		{
@@ -98,14 +93,5 @@ func TestAuthenticateUser(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, test.tester)
-	}
-}
-
-func assertUser(t *testing.T, actual, expected *model.User) {
-	if actual.Email != expected.Email {
-		t.Errorf("unexpected email: got %s, but expected %s\n", actual.Email, expected.Email)
-	}
-	if actual.Password != expected.Password {
-		t.Errorf("unexpected password: got %s, but expected %s\n", actual.Password, expected.Password)
 	}
 }
