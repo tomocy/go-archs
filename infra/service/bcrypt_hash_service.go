@@ -20,3 +20,7 @@ func (s bcryptHashService) GenerateHashFromPassword(plain string) (string, error
 	hash, err := bcrypt.GenerateFromPassword([]byte(plain), bcrypt.DefaultCost)
 	return string(hash), err
 }
+
+func (s bcryptHashService) ComparePasswords(plain, hash string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(plain))
+}

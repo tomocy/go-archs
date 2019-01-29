@@ -43,7 +43,7 @@ func (r registry) newUserController() controller.UserController {
 }
 
 func (r registry) newUserUsecase() usecase.UserUsecase {
-	return usecase.NewUserUsecase(r.userRepository, r.newUserResponseWriter(), r.newUserService())
+	return usecase.NewUserUsecase(r.userRepository, r.newUserResponseWriter(), r.newUserService(), r.newSessionService())
 }
 
 func (r registry) newUserRepository() repository.UserRepository {
@@ -56,4 +56,8 @@ func (r registry) newUserResponseWriter() response.UserResponseWriter {
 
 func (r registry) newUserService() service.UserService {
 	return service.NewUserService(r.userRepository, infraservice.NewHashService())
+}
+
+func (r registry) newSessionService() service.SessionService {
+	return infraservice.NewSessionService()
 }

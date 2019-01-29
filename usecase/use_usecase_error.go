@@ -29,3 +29,27 @@ func (e duplicatedEmailError) Error() string {
 func (e duplicatedEmailError) duplicatedEmail() string {
 	return e.email
 }
+
+type IncorrectCredentialError interface {
+	error
+	incorrectCredentialError()
+}
+
+type incorrectCredentialError struct {
+}
+
+func newIncorrectCredentialError() IncorrectCredentialError {
+	return new(incorrectCredentialError)
+}
+
+func IsIncorrectCredentialError(err error) bool {
+	_, ok := err.(IncorrectCredentialError)
+	return ok
+}
+
+func (e incorrectCredentialError) Error() string {
+	return "incorrect credential error"
+}
+
+func (e incorrectCredentialError) incorrectCredentialError() {
+}

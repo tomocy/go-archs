@@ -18,3 +18,10 @@ func (p userPresenter) WriteRegisterUserResponse(user *model.User) (*response.Re
 		Email: user.Email,
 	}, nil
 }
+
+func (p userPresenter) WriteAuthenticateUserResponse(user *model.User) (*response.AuthenticateUserResponse, error) {
+	return &response.AuthenticateUserResponse{
+		ID:    user.ID,
+		Email: user.Email,
+	}, nil
+}
