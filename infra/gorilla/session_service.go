@@ -1,4 +1,4 @@
-package service
+package gorilla
 
 import (
 	"net/http"
@@ -8,25 +8,21 @@ import (
 	"github.com/tomocy/archs/domain/service"
 )
 
-func NewSessionService() service.SessionService {
-	return session
-}
-
-var session service.SessionService = newGorillaSessionService()
+var SessionService service.SessionService = newSessionService()
 
 const sessionKey = "IHAVEAPEN"
 
-type gorillaSessionService struct {
+type sessionService struct {
 	store sessions.Store
 }
 
-func newGorillaSessionService() *gorillaSessionService {
-	return &gorillaSessionService{
+func newSessionService() *sessionService {
+	return &sessionService{
 		store: sessions.NewCookieStore([]byte(sessionKey)),
 	}
 }
 
-func (s gorillaSessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Request, user *model.User) error {
+func (s sessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Request, user *model.User) error {
 	sess, err := s.store.Get(r, sessionKey)
 	if err != nil {
 		return err
