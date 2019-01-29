@@ -1,15 +1,21 @@
 package handler
 
 type Handler interface {
+	AuthenticationHandler
 	UserHandler
 }
 
 type handler struct {
+	AuthenticationHandler
 	UserHandler
 }
 
-func NewHandler(u UserHandler) Handler {
+func NewHandler(
+	authHandler AuthenticationHandler,
+	userHandler UserHandler,
+) Handler {
 	return &handler{
-		UserHandler: u,
+		AuthenticationHandler: authHandler,
+		UserHandler:           userHandler,
 	}
 }

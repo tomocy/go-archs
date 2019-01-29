@@ -31,6 +31,9 @@ func (s chiServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s chiServer) RegisterRoute(h handler.Handler) {
+	s.router.Route("/authentication", func(r chi.Router) {
+		r.Post("/", h.AuthenticateUser)
+	})
 	s.router.Route("/users", func(r chi.Router) {
 		r.Post("/", h.RegisterUser)
 	})

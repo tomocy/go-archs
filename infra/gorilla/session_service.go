@@ -1,6 +1,7 @@
 package gorilla
 
 import (
+	"encoding/gob"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -17,9 +18,15 @@ type sessionService struct {
 }
 
 func newSessionService() *sessionService {
-	return &sessionService{
+	service := &sessionService{
 		store: sessions.NewCookieStore([]byte(sessionKey)),
 	}
+	service.registerCustomTypes()
+	return service
+}
+
+func (s sessionService) registerCustomTypes() {
+	gob.Register(model.UserID(""))
 }
 
 func (s sessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Request, user *model.User) error {

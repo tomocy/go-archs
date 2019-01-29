@@ -30,23 +30,23 @@ func (r *registry) initRepositories() {
 }
 
 func (r registry) NewHandler() handler.Handler {
-	return handler.NewHandler(r.newUserHandler())
+	return handler.NewHandler(r.newAuthenticationHandler(), r.newUserHandler())
+}
+
+func (r registry) newAuthenticationHandler() handler.AuthenticationHandler {
+	return handler.NewAuthenticationHandler(r.newAuthenticationController())
 }
 
 func (r registry) newUserHandler() handler.UserHandler {
 	return handler.NewUserHandler(r.newUserController())
 }
 
-func (r registry) newUserController() controller.UserController {
-	return controller.NewUserController(r.newUserUsecase())
+func (r registry) newAuthenticationController() controller.AuthenticationController {
+	return controller.NewAuthenticationController(r.newAuthenticationUsecase())
 }
 
-func (r registry) newUserUsecase() usecase.UserUsecase {
-	return usecase.NewUserUsecase(
-		r.userRepository,
-		r.newUserService(),
-		r.newHashService(),
-	)
+func (r registry) newUserController() controller.UserController {
+	return controller.NewUserController(r.newUserUsecase())
 }
 
 func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
@@ -57,12 +57,16 @@ func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
 	)
 }
 
-func (r registry) newUserRepository() repository.UserRepository {
-	return memory.UserRepository
+func (r registry) newUserUsecase() usecase.UserUsecase {
+	return usecase.NewUserUsecase(
+		r.userRepository,
+		r.newUserService(),
+		r.newHashService(),
+	)
 }
 
-func (r registry) newUserService() service.UserService {
-	return service.NewUserService(r.userRepository, r.newHashService())
+func (r registry) newUserRepository() repository.UserRepository {
+	return memory.UserRepository
 }
 
 func (r registry) newHashService() service.HashService {
@@ -71,4 +75,8 @@ func (r registry) newHashService() service.HashService {
 
 func (r registry) newSessionService() service.SessionService {
 	return gorilla.SessionService
+}
+
+func (r registry) newUserService() service.UserService {
+	return service.NewUserService(r.userRepository, r.newHashService())
 }
