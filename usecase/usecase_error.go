@@ -4,7 +4,7 @@ import "fmt"
 
 type DuplicatedEmailError interface {
 	error
-	duplicatedEmail() string
+	duplicatedEmail()
 }
 
 type duplicatedEmailError struct {
@@ -23,11 +23,10 @@ func IsDuplicatedEmailError(err error) bool {
 }
 
 func (e duplicatedEmailError) Error() string {
-	return fmt.Sprintf("duplicated email: %s\n", e.email)
+	return fmt.Sprintf("duplicated email: %s", e.email)
 }
 
-func (e duplicatedEmailError) duplicatedEmail() string {
-	return e.email
+func (e duplicatedEmailError) duplicatedEmail() {
 }
 
 type IncorrectCredentialError interface {

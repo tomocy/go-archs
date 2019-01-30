@@ -6,6 +6,7 @@ import (
 
 	"github.com/tomocy/archs/adapter/controller"
 	"github.com/tomocy/archs/infra/web/validator"
+	"github.com/tomocy/archs/usecase"
 )
 
 type UserHandler interface {
@@ -31,7 +32,12 @@ func (h userHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.controller.RegisterUser(validated.Email, validated.Password)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		switch err.(type) {
+		case usecase.DuplicatedEmailError:
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
