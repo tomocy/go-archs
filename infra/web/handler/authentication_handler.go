@@ -2,11 +2,11 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
 	"github.com/tomocy/archs/infra/web/validator"
+	"github.com/tomocy/archs/usecase"
 )
 
 type AuthenticationHandler interface {
@@ -32,8 +32,12 @@ func (h authenticationHandler) AuthenticateUser(w http.ResponseWriter, r *http.R
 
 	user, err := h.controller.AuthenticateUser(w, r, validated.Email, validated.Password)
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		switch err.(type) {
+		case usecase.IncorrectCredentialError:
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
