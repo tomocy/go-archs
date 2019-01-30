@@ -9,8 +9,9 @@ import (
 )
 
 func TestComposeTweet(t *testing.T) {
+	tweetRepo := memory.NewTweetRepository()
 	userRepo := memory.NewUserRepository()
-	usecase := NewTweetUsecase(userRepo)
+	usecase := NewTweetUsecase(tweetRepo, userRepo)
 	userID := model.UserID("test user id")
 	content := "Is this a pen?"
 	userRepo.Save(&model.User{

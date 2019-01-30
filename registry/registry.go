@@ -16,7 +16,8 @@ type Registry interface {
 }
 
 type registry struct {
-	userRepository repository.UserRepository
+	tweetRepository repository.TweetRepository
+	userRepository  repository.UserRepository
 }
 
 func NewRegistry() Registry {
@@ -26,6 +27,7 @@ func NewRegistry() Registry {
 }
 
 func (r *registry) initRepositories() {
+	r.tweetRepository = r.newTweetRepository()
 	r.userRepository = r.newUserRepository()
 }
 
@@ -70,7 +72,7 @@ func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
 }
 
 func (r registry) newTweetUsecase() usecase.TweetUsecase {
-	return usecase.NewTweetUsecase(r.userRepository)
+	return usecase.NewTweetUsecase(r.tweetRepository, r.userRepository)
 }
 
 func (r registry) newUserUsecase() usecase.UserUsecase {
@@ -79,6 +81,10 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 		r.newUserService(),
 		r.newHashService(),
 	)
+}
+
+func (r registry) newTweetRepository() repository.TweetRepository {
+	return memory.TweetRepository
 }
 
 func (r registry) newUserRepository() repository.UserRepository {

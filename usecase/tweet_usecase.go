@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/usecase/request"
@@ -11,12 +13,14 @@ type TweetUsecase interface {
 }
 
 type tweetUsecase struct {
-	userRepository repository.UserRepository
+	tweetRepository repository.TweetRepository
+	userRepository  repository.UserRepository
 }
 
-func NewTweetUsecase(userRepo repository.UserRepository) TweetUsecase {
+func NewTweetUsecase(tweetRepo repository.TweetRepository, userRepo repository.UserRepository) TweetUsecase {
 	return &tweetUsecase{
-		userRepository: userRepo,
+		tweetRepository: tweetRepo,
+		userRepository:  userRepo,
 	}
 }
 
@@ -26,5 +30,10 @@ func (u tweetUsecase) ComposeTweet(req *request.ComposeTweetRequest) (*model.Twe
 		return nil, newNoSuchUserError()
 	}
 
-	return user.ComposeTweet(req.Content), nil
+	tweet := user.ComposeTweet(req.Content)
+	if err := u.tweetRepository.Save(tweet); err != nil {
+		return nil, fmt.Errorf("failed to compose tweet: %s", err)
+	}
+
+	return tweet, nil
 }
