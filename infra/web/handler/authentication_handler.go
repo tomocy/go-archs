@@ -37,5 +37,5 @@ func (h authenticationHandler) AuthenticateUser(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	fmt.Fprintf(w, "authenticate user: {ID: %s, E\mail: %s}\n", user.ID, user.Email)
+	fmt.Fprintf(w, "authenticate user: {ID: %s, Eail: %s}\n", user.ID, user.Email)
 }
