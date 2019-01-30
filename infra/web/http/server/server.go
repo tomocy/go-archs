@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/tomocy/archs/infra/web/handler"
-	"github.com/tomocy/archs/infra/web/middleware"
+	"github.com/tomocy/archs/infra/web/http/handler"
+	"github.com/tomocy/archs/infra/web/http/middleware"
 	"github.com/tomocy/chi"
 )
 

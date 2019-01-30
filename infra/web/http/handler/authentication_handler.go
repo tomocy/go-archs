@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
-	"github.com/tomocy/archs/infra/web/validator"
+	"github.com/tomocy/archs/infra/web/http/validator"
 	"github.com/tomocy/archs/usecase"
 )
 

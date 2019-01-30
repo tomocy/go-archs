@@ -7,7 +7,7 @@ import (
 	"github.com/tomocy/archs/infra/bcrypt"
 	"github.com/tomocy/archs/infra/memory"
 	"github.com/tomocy/archs/infra/session"
-	"github.com/tomocy/archs/infra/web/handler"
+	"github.com/tomocy/archs/infra/web/http/handler"
 	"github.com/tomocy/archs/usecase"
 )
 

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tomocy/archs/infra/web/server"
+	"github.com/tomocy/archs/infra/web/http/server"
 	"github.com/tomocy/archs/registry"
 )
 
