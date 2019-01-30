@@ -35,5 +35,5 @@ func (h userHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "register user: {id: %s, email: %s}\n", user.ID, user.Email)
+	fmt.Fprintf(w, "register user: {ID: %s, Email: %s}\n", user.ID, user.Email)
 }
