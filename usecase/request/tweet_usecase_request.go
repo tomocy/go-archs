@@ -13,3 +13,13 @@ func NewComposeTweetRequest(userID model.UserID, content string) *ComposeTweetRe
 		Content: content,
 	}
 }
+
+type DeleteTweetRequest struct {
+	TweetID model.TweetID
+}
+
+func NewDeleteTweetRequest(tweetID model.TweetID) *DeleteTweetRequest {
+	return &DeleteTweetRequest{
+		TweetID: tweetID,
+	}
+}

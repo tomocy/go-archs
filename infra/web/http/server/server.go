@@ -42,6 +42,7 @@ func (s chiServer) RegisterRoute(h handler.Handler) {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Authenticated)
 			r.Post("/", h.ComposeTweet)
+			r.Delete("/{id}", h.DeleteTweet)
 		})
 	})
 	s.router.Route("/users", func(r chi.Router) {

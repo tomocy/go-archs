@@ -47,3 +47,40 @@ func TestComposeTweet(t *testing.T) {
 		t.Run(test.name, test.tester)
 	}
 }
+
+func TestDeleteTweet(t *testing.T) {
+	tweetRepo := memory.NewTweetRepository()
+	userRepo := memory.NewUserRepository()
+	usecase := NewTweetUsecase(tweetRepo, userRepo)
+	tweetID := model.TweetID("test tweet id")
+	tweetRepo.Save(&model.Tweet{
+		ID: tweetID,
+	})
+	tests := []struct {
+		name   string
+		tester func(t *testing.T)
+	}{
+		{
+			"normal",
+			func(t *testing.T) {
+				req := request.NewDeleteTweetRequest(tweetID)
+				if err := usecase.DeleteTweet(req); err != nil {
+					t.Errorf("unexpected error: %s\n", err)
+				}
+			},
+		},
+		{
+			"no such tweet",
+			func(t *testing.T) {
+				req := request.NewDeleteTweetRequest("")
+				if err := usecase.DeleteTweet(req); err != nil {
+					t.Errorf("unexpected error: %s\n", err)
+				}
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, test.tester)
+	}
+}

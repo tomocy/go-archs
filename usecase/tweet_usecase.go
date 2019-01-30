@@ -10,6 +10,7 @@ import (
 
 type TweetUsecase interface {
 	ComposeTweet(req *request.ComposeTweetRequest) (*model.Tweet, error)
+	DeleteTweet(req *request.DeleteTweetRequest) error
 }
 
 type tweetUsecase struct {
@@ -36,4 +37,12 @@ func (u tweetUsecase) ComposeTweet(req *request.ComposeTweetRequest) (*model.Twe
 	}
 
 	return tweet, nil
+}
+
+func (u tweetUsecase) DeleteTweet(req *request.DeleteTweetRequest) error {
+	if err := u.tweetRepository.Delete(req.TweetID); err != nil {
+		return fmt.Errorf("failed to delete tweet: %s", err)
+	}
+
+	return nil
 }

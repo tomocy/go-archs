@@ -8,6 +8,7 @@ import (
 
 type TweetController interface {
 	ComposeTweet(userID, content string) (*model.Tweet, error)
+	DeleteTweet(tweetID string) error
 }
 
 type tweetController struct {
@@ -23,5 +24,11 @@ func NewTweetController(usecase usecase.TweetUsecase) TweetController {
 func (c tweetController) ComposeTweet(userID, content string) (*model.Tweet, error) {
 	return c.usecase.ComposeTweet(
 		request.NewComposeTweetRequest(model.UserID(userID), content),
+	)
+}
+
+func (c tweetController) DeleteTweet(tweetID string) error {
+	return c.usecase.DeleteTweet(
+		request.NewDeleteTweetRequest(model.TweetID(tweetID)),
 	)
 }

@@ -23,3 +23,18 @@ func (r *tweetRepository) Save(tweet *model.Tweet) error {
 	r.tweets = append(r.tweets, tweet)
 	return nil
 }
+
+func (r *tweetRepository) Delete(id model.TweetID) error {
+	for i, tweet := range r.tweets {
+		if tweet.ID != id {
+			continue
+		}
+
+		r.tweets = append(r.tweets[:i], r.tweets[i+1:]...)
+		n := make([]*model.Tweet, len(r.tweets))
+		copy(n, r.tweets)
+		r.tweets = n
+	}
+
+	return nil
+}
