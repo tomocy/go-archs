@@ -2,12 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
 	"github.com/tomocy/archs/infra/session"
 	"github.com/tomocy/archs/infra/web/validator"
+	"github.com/tomocy/archs/usecase"
 )
 
 type TweetHandler interface {
@@ -34,8 +34,12 @@ func (h tweetHandler) ComposeTweet(w http.ResponseWriter, r *http.Request) {
 
 	tweet, err := h.controller.ComposeTweet(userID, validated.Content)
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		switch err.(type) {
+		case usecase.NoSuchUserError:
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
