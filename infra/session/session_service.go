@@ -1,4 +1,4 @@
-package gorilla
+package session
 
 import (
 	"encoding/gob"
@@ -9,27 +9,27 @@ import (
 	"github.com/tomocy/archs/domain/service"
 )
 
-var SessionService service.SessionService = newSessionService()
+var SessionService service.SessionService = newGorillaSessionService()
 
 const sessionKey = "IHAVEAPEN"
 
-type sessionService struct {
+type gorillaSessionService struct {
 	store sessions.Store
 }
 
-func newSessionService() *sessionService {
-	service := &sessionService{
+func newGorillaSessionService() *gorillaSessionService {
+	service := &gorillaSessionService{
 		store: sessions.NewCookieStore([]byte(sessionKey)),
 	}
 	service.registerCustomTypes()
 	return service
 }
 
-func (s sessionService) registerCustomTypes() {
+func (s gorillaSessionService) registerCustomTypes() {
 	gob.Register(model.UserID(""))
 }
 
-func (s sessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Request, user *model.User) error {
+func (s gorillaSessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Request, user *model.User) error {
 	sess, err := s.store.Get(r, sessionKey)
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func (s sessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Reques
 	return sess.Save(r, w)
 }
 
-func (s sessionService) HasAuthenticUser(r *http.Request) bool {
+func (s gorillaSessionService) HasAuthenticUser(r *http.Request) bool {
 	sess, err := s.store.Get(r, sessionKey)
 	if err != nil {
 		return false

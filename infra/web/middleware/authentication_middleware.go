@@ -3,12 +3,12 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/tomocy/archs/infra/gorilla"
+	"github.com/tomocy/archs/infra/session"
 )
 
 func Deauthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if gorilla.SessionService.HasAuthenticUser(r) {
+		if session.SessionService.HasAuthenticUser(r) {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}

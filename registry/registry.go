@@ -5,8 +5,8 @@ import (
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/infra/bcrypt"
-	"github.com/tomocy/archs/infra/gorilla"
 	"github.com/tomocy/archs/infra/memory"
+	"github.com/tomocy/archs/infra/session"
 	"github.com/tomocy/archs/infra/web/handler"
 	"github.com/tomocy/archs/usecase"
 )
@@ -74,7 +74,7 @@ func (r registry) newHashService() service.HashService {
 }
 
 func (r registry) newSessionService() service.SessionService {
-	return gorilla.SessionService
+	return session.SessionService
 }
 
 func (r registry) newUserService() service.UserService {
