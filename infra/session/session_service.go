@@ -1,7 +1,6 @@
 package session
 
 import (
-	"encoding/gob"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -18,15 +17,9 @@ type gorillaSessionService struct {
 }
 
 func newGorillaSessionService() *gorillaSessionService {
-	service := &gorillaSessionService{
+	return &gorillaSessionService{
 		store: sessions.NewCookieStore([]byte(sessionKey)),
 	}
-	service.registerCustomTypes()
-	return service
-}
-
-func (s gorillaSessionService) registerCustomTypes() {
-	gob.Register(model.UserID(""))
 }
 
 func (s gorillaSessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Request, user *model.User) error {
@@ -36,7 +29,7 @@ func (s gorillaSessionService) StoreAuthenticUser(w http.ResponseWriter, r *http
 	}
 
 	sess.Values["authenticated"] = true
-	sess.Values["user_id"] = user.ID
+	sess.Values["user_id"] = string(user.ID)
 	return sess.Save(r, w)
 }
 
@@ -48,4 +41,18 @@ func (s gorillaSessionService) HasAuthenticUser(r *http.Request) bool {
 
 	authenticated, ok := sess.Values["authenticated"].(bool)
 	return authenticated && ok
+}
+
+func (s gorillaSessionService) GetAuthenticUserID(r *http.Request) string {
+	sess, err := s.store.Get(r, sessionKey)
+	if err != nil {
+		return ""
+	}
+
+	userID, ok := sess.Values["user_id"].(string)
+	if !ok {
+		return ""
+	}
+
+	return userID
 }

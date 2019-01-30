@@ -23,3 +23,7 @@ func NewUser(email, password string) *User {
 		Password: password,
 	}
 }
+
+func (u User) ComposeTweet(content string) *Tweet {
+	return NewTweet(u.ID, content)
+}

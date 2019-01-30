@@ -35,7 +35,7 @@ func (s *mockSessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.R
 	}
 
 	s.store["authenticated"] = true
-	s.store["user_id"] = user.ID
+	s.store["user_id"] = string(user.ID)
 
 	return nil
 }
@@ -47,4 +47,17 @@ func (s *mockSessionService) HasAuthenticUser(r *http.Request) bool {
 
 	authenticated, ok := s.store["authenticated"].(bool)
 	return authenticated && ok
+}
+
+func (s *mockSessionService) GetAuthenticUserID(r *http.Request) string {
+	if s.store == nil {
+		s.store = make(map[string]interface{})
+	}
+
+	userID, ok := s.store["user_id"].(string)
+	if !ok {
+		return ""
+	}
+
+	return userID
 }
