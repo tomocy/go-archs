@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/tomocy/archs/infra/web/handler"
+	"github.com/tomocy/archs/infra/web/middleware"
 	"github.com/tomocy/chi"
 )
 
@@ -32,9 +33,15 @@ func (s chiServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s chiServer) RegisterRoute(h handler.Handler) {
 	s.router.Route("/authentication", func(r chi.Router) {
-		r.Post("/", h.AuthenticateUser)
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.Deauthenticated)
+			r.Post("/", h.AuthenticateUser)
+		})
 	})
 	s.router.Route("/users", func(r chi.Router) {
-		r.Post("/", h.RegisterUser)
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.Deauthenticated)
+			r.Post("/", h.RegisterUser)
+		})
 	})
 }

@@ -39,3 +39,12 @@ func (s *mockSessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.R
 
 	return nil
 }
+
+func (s *mockSessionService) HasAuthenticUser(r *http.Request) bool {
+	if s.store == nil {
+		s.store = make(map[string]interface{})
+	}
+
+	authenticated, ok := s.store["authenticated"].(bool)
+	return authenticated && ok
+}

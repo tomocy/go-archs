@@ -39,3 +39,13 @@ func (s sessionService) StoreAuthenticUser(w http.ResponseWriter, r *http.Reques
 	sess.Values["user_id"] = user.ID
 	return sess.Save(r, w)
 }
+
+func (s sessionService) HasAuthenticUser(r *http.Request) bool {
+	sess, err := s.store.Get(r, sessionKey)
+	if err != nil {
+		return false
+	}
+
+	authenticated, ok := sess.Values["authenticated"].(bool)
+	return authenticated && ok
+}
