@@ -18,13 +18,7 @@ func TestRegisterUser(t *testing.T) {
 	)
 	email := "test@test.com"
 	password := "plain"
-	test := struct {
-		cmd      *request.RegisterUserRequest
-		expected *model.User
-	}{
-		cmd:      request.NewRegisterUserRequest(email, password),
-		expected: model.NewUser(email, mockHash),
-	}
+	req := request.NewRegisterUserRequest(email, password)
 	tests := []struct {
 		name   string
 		tester func(t *testing.T)
@@ -32,7 +26,7 @@ func TestRegisterUser(t *testing.T) {
 		{
 			"normal",
 			func(t *testing.T) {
-				_, err := usecase.RegisterUser(test.cmd)
+				_, err := usecase.RegisterUser(req)
 				if err != nil {
 					t.Fatalf("unexpected error: %s\n", err)
 				}
@@ -42,7 +36,7 @@ func TestRegisterUser(t *testing.T) {
 			"duplicated email",
 			func(t *testing.T) {
 				repo.Save(model.NewUser(email, password))
-				_, err := usecase.RegisterUser(test.cmd)
+				_, err := usecase.RegisterUser(req)
 				if !IsDuplicatedEmailError(err) {
 					t.Errorf("unexpected error: got %s, but expected DuplicatedEmailError", err)
 				}
