@@ -17,13 +17,6 @@ func TestAuthenticateUser(t *testing.T) {
 	)
 	email := "test@test.com"
 	repo.Save(model.NewUser(email, mockHash))
-	test := struct {
-		cmd      *request.AuthenticateUserRequest
-		expected *model.User
-	}{
-		cmd:      request.NewAuthenticateUserRequest(nil, nil, email, mockPlain),
-		expected: model.NewUser(email, mockHash),
-	}
 	tests := []struct {
 		name   string
 		tester func(t *testing.T)
@@ -31,7 +24,8 @@ func TestAuthenticateUser(t *testing.T) {
 		{
 			"normal",
 			func(t *testing.T) {
-				_, err := usecase.AuthenticateUser(test.cmd)
+				req := request.NewAuthenticateUserRequest(nil, nil, email, mockPlain)
+				_, err := usecase.AuthenticateUser(req)
 				if err != nil {
 					t.Errorf("unexpected error: %s", err)
 				}
@@ -40,8 +34,8 @@ func TestAuthenticateUser(t *testing.T) {
 		{
 			"incorrent password",
 			func(t *testing.T) {
-				test.cmd.Password = ""
-				_, err := usecase.AuthenticateUser(test.cmd)
+				req := request.NewAuthenticateUserRequest(nil, nil, email, "")
+				_, err := usecase.AuthenticateUser(req)
 				if !IsIncorrectCredentialError(err) {
 					t.Errorf("unexpected error: got %v, but expected IncorrectCredentialError\n", err)
 				}
