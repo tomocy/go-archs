@@ -4,6 +4,7 @@ import "github.com/tomocy/archs/domain/model"
 
 type AuthenticationPresenter interface {
 	PresentAuthenticUser(user *model.User) *AuthenticUserPresent
+	PresentAuthenticUserID(id model.UserID) string
 }
 
 func NewAuthenticationPresenter() AuthenticationPresenter {
@@ -23,4 +24,8 @@ func (p authenticationPresenter) PresentAuthenticUser(user *model.User) *Authent
 		ID:    string(user.ID),
 		Email: user.Email,
 	}
+}
+
+func (p authenticationPresenter) PresentAuthenticUserID(id model.UserID) string {
+	return string(id)
 }

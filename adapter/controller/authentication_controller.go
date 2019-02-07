@@ -33,7 +33,8 @@ func (c authenticationController) AuthenticateUser(w http.ResponseWriter, r *htt
 }
 
 func (c authenticationController) GetAuthenticUserID(r *http.Request) string {
-	return string(c.usecase.GetAuthenticUserID(
+	id := c.usecase.GetAuthenticUserID(
 		request.NewGetAuthenticUserIDRequest(r),
-	))
+	)
+	return c.presenter.PresentAuthenticUserID(id)
 }
