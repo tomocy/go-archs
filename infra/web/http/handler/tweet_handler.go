@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
-	"github.com/tomocy/archs/infra/session"
 	"github.com/tomocy/archs/infra/web/http/validator"
 	"github.com/tomocy/archs/usecase"
 	"github.com/tomocy/chi"
@@ -27,7 +26,7 @@ func NewTweetHandler(controller controller.TweetController) TweetHandler {
 }
 
 func (h tweetHandler) ComposeTweet(w http.ResponseWriter, r *http.Request) {
-	userID := session.SessionService.GetAuthenticUserID(r)
+	userID := h.controller.GetAuthenticUserID(r)
 	validated, err := validator.ValidateToComposeTweet(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

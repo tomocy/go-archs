@@ -11,6 +11,7 @@ import (
 
 type AuthenticationUsecase interface {
 	AuthenticateUser(req *request.AuthenticateUserRequest) (*model.User, error)
+	GetAuthenticUserID(req *request.GetAuthenticUserIDRequest) model.UserID
 }
 
 type authenticationUsecase struct {
@@ -40,4 +41,8 @@ func (u authenticationUsecase) AuthenticateUser(req *request.AuthenticateUserReq
 	}
 
 	return user, nil
+}
+
+func (u authenticationUsecase) GetAuthenticUserID(req *request.GetAuthenticUserIDRequest) model.UserID {
+	return model.UserID(u.sessionService.GetAuthenticUserID(req.Request))
 }

@@ -1,23 +1,28 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/usecase"
 	"github.com/tomocy/archs/usecase/request"
 )
 
 type TweetController interface {
+	GetAuthenticUserID(r *http.Request) string
 	ComposeTweet(userID, content string) (*model.Tweet, error)
 	DeleteTweet(tweetID string) error
 }
 
 type tweetController struct {
+	AuthenticationController
 	usecase usecase.TweetUsecase
 }
 
-func NewTweetController(usecase usecase.TweetUsecase) TweetController {
+func NewTweetController(authController AuthenticationController, usecase usecase.TweetUsecase) TweetController {
 	return &tweetController{
-		usecase: usecase,
+		AuthenticationController: authController,
+		usecase:                  usecase,
 	}
 }
 

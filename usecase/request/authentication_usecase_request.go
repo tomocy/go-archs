@@ -17,3 +17,13 @@ func NewAuthenticateUserRequest(w http.ResponseWriter, r *http.Request, email, p
 		Password:       password,
 	}
 }
+
+type GetAuthenticUserIDRequest struct {
+	Request *http.Request
+}
+
+func NewGetAuthenticUserIDRequest(r *http.Request) *GetAuthenticUserIDRequest {
+	return &GetAuthenticUserIDRequest{
+		Request: r,
+	}
+}

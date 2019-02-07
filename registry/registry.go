@@ -56,7 +56,10 @@ func (r registry) newAuthenticationController() controller.AuthenticationControl
 }
 
 func (r registry) newTweetController() controller.TweetController {
-	return controller.NewTweetController(r.newTweetUsecase())
+	return controller.NewTweetController(
+		r.newAuthenticationController(),
+		r.newTweetUsecase(),
+	)
 }
 
 func (r registry) newUserController() controller.UserController {

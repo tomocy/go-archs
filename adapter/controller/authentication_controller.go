@@ -10,6 +10,7 @@ import (
 
 type AuthenticationController interface {
 	AuthenticateUser(w http.ResponseWriter, r *http.Request, email, password string) (*model.User, error)
+	GetAuthenticUserID(r *http.Request) string
 }
 
 type authenticationController struct {
@@ -26,4 +27,10 @@ func (c authenticationController) AuthenticateUser(w http.ResponseWriter, r *htt
 	return c.usecase.AuthenticateUser(
 		request.NewAuthenticateUserRequest(w, r, email, password),
 	)
+}
+
+func (c authenticationController) GetAuthenticUserID(r *http.Request) string {
+	return string(c.usecase.GetAuthenticUserID(
+		request.NewGetAuthenticUserIDRequest(r),
+	))
 }
