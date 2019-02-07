@@ -3,6 +3,7 @@ package usecase
 import (
 	"testing"
 
+	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/memory"
 	"github.com/tomocy/archs/usecase/request"
@@ -11,7 +12,7 @@ import (
 func TestComposeTweet(t *testing.T) {
 	tweetRepo := memory.NewTweetRepository()
 	userRepo := memory.NewUserRepository()
-	usecase := NewTweetUsecase(tweetRepo, userRepo)
+	usecase := NewTweetUsecase(presenter.NewTweetUsecaseResponser(), tweetRepo, userRepo)
 	userID := model.UserID("test user id")
 	content := "Is this a pen?"
 	userRepo.Save(&model.User{
@@ -51,7 +52,7 @@ func TestComposeTweet(t *testing.T) {
 func TestDeleteTweet(t *testing.T) {
 	tweetRepo := memory.NewTweetRepository()
 	userRepo := memory.NewUserRepository()
-	usecase := NewTweetUsecase(tweetRepo, userRepo)
+	usecase := NewTweetUsecase(presenter.NewTweetUsecaseResponser(), tweetRepo, userRepo)
 	tweetID := model.TweetID("test tweet id")
 	tweetRepo.Save(&model.Tweet{
 		ID: tweetID,

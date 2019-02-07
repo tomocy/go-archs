@@ -54,7 +54,10 @@ func (r registry) newUserHandler() handler.UserHandler {
 }
 
 func (r registry) newAuthenticationController() controller.AuthenticationController {
-	return controller.NewAuthenticationController(r.newAuthenticationUsecase())
+	return controller.NewAuthenticationController(
+		r.newAuthenticationPresenter(),
+		r.newAuthenticationUsecase(),
+	)
 }
 
 func (r registry) newTweetController() controller.TweetController {
@@ -68,9 +71,12 @@ func (r registry) newUserController() controller.UserController {
 	return controller.NewUserController(r.newUserUsecase())
 }
 
+func (r registry) newAuthenticationPresenter() presenter.AuthenticationPresenter {
+	return presenter.NewAuthenticationPresenter()
+}
+
 func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
 	return usecase.NewAuthenticationUsecase(
-		r.newAuthenticationUsecaseResponser(),
 		r.userRepository,
 		r.newHashService(),
 		r.newSessionService(),
@@ -92,10 +98,6 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 		r.newUserService(),
 		r.newHashService(),
 	)
-}
-
-func (r registry) newAuthenticationUsecaseResponser() response.AuthenticationUsecaseResponser {
-	return presenter.NewAuthenticationUsecaseResponser(r.newUserUsecaseResponser())
 }
 
 func (r registry) newTweetUsecaseResponser() response.TweetUsecaseResponser {

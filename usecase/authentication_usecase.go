@@ -7,36 +7,32 @@ import (
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/usecase/request"
-	"github.com/tomocy/archs/usecase/response"
 )
 
 type AuthenticationUsecase interface {
-	AuthenticateUser(req *request.AuthenticateUserRequest) (*response.UserResponse, error)
+	AuthenticateUser(req *request.AuthenticateUserRequest) (*model.User, error)
 	GetAuthenticUserID(req *request.GetAuthenticUserIDRequest) model.UserID
 }
 
 type authenticationUsecase struct {
-	responser      response.AuthenticationUsecaseResponser
 	userRepository repository.UserRepository
 	hashService    service.HashService
 	sessionService service.SessionService
 }
 
 func NewAuthenticationUsecase(
-	responser response.AuthenticationUsecaseResponser,
 	userRepo repository.UserRepository,
 	hashService service.HashService,
 	sessService service.SessionService,
 ) AuthenticationUsecase {
 	return &authenticationUsecase{
-		responser:      responser,
 		userRepository: userRepo,
 		hashService:    hashService,
 		sessionService: sessService,
 	}
 }
 
-func (u authenticationUsecase) AuthenticateUser(req *request.AuthenticateUserRequest) (*response.UserResponse, error) {
+func (u authenticationUsecase) AuthenticateUser(req *request.AuthenticateUserRequest) (*model.User, error) {
 	user, err := u.userRepository.FindByEmail(req.Email)
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate user: %s", err)
@@ -48,7 +44,7 @@ func (u authenticationUsecase) AuthenticateUser(req *request.AuthenticateUserReq
 		return nil, fmt.Errorf("failed to authenticate user: %s", err)
 	}
 
-	return u.responser.ResponseUser(user), nil
+	return user, nil
 }
 
 func (u authenticationUsecase) GetAuthenticUserID(req *request.GetAuthenticUserIDRequest) model.UserID {

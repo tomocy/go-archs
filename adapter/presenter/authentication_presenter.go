@@ -1,13 +1,26 @@
 package presenter
 
-import "github.com/tomocy/archs/usecase/response"
+import "github.com/tomocy/archs/domain/model"
 
-func NewAuthenticationUsecaseResponser(userResponser response.UserUsecaseResponser) response.AuthenticationUsecaseResponser {
-	return &authenticationPresenter{
-		UserUsecaseResponser: userResponser,
-	}
+type AuthenticationPresenter interface {
+	PresentAuthenticUser(user *model.User) *AuthenticUserPresent
+}
+
+func NewAuthenticationPresenter() AuthenticationPresenter {
+	return new(authenticationPresenter)
 }
 
 type authenticationPresenter struct {
-	response.UserUsecaseResponser
+}
+
+type AuthenticUserPresent struct {
+	ID    string
+	Email string
+}
+
+func (p authenticationPresenter) PresentAuthenticUser(user *model.User) *AuthenticUserPresent {
+	return &AuthenticUserPresent{
+		ID:    string(user.ID),
+		Email: user.Email,
+	}
 }
