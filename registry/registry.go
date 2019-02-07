@@ -10,7 +10,6 @@ import (
 	"github.com/tomocy/archs/infra/session"
 	"github.com/tomocy/archs/infra/web/http/handler"
 	"github.com/tomocy/archs/usecase"
-	"github.com/tomocy/archs/usecase/response"
 )
 
 type Registry interface {
@@ -63,6 +62,7 @@ func (r registry) newAuthenticationController() controller.AuthenticationControl
 func (r registry) newTweetController() controller.TweetController {
 	return controller.NewTweetController(
 		r.newAuthenticationController(),
+		r.newTweetPresenter(),
 		r.newTweetUsecase(),
 	)
 }
@@ -76,6 +76,10 @@ func (r registry) newUserController() controller.UserController {
 
 func (r registry) newAuthenticationPresenter() presenter.AuthenticationPresenter {
 	return presenter.NewAuthenticationPresenter()
+}
+
+func (r registry) newTweetPresenter() presenter.TweetPresenter {
+	return presenter.NewTweetPresenter()
 }
 
 func (r registry) newUserPresenter() presenter.UserPresenter {
@@ -92,7 +96,6 @@ func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
 
 func (r registry) newTweetUsecase() usecase.TweetUsecase {
 	return usecase.NewTweetUsecase(
-		r.newTweetUsecaseResponser(),
 		r.tweetRepository,
 		r.userRepository,
 	)
@@ -104,10 +107,6 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 		r.newUserService(),
 		r.newHashService(),
 	)
-}
-
-func (r registry) newTweetUsecaseResponser() response.TweetUsecaseResponser {
-	return presenter.NewTweetUsecaseResponser()
 }
 
 func (r registry) newTweetRepository() repository.TweetRepository {
