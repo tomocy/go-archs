@@ -3,13 +3,13 @@ package controller
 import (
 	"net/http"
 
-	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/usecase"
 	"github.com/tomocy/archs/usecase/request"
+	"github.com/tomocy/archs/usecase/response"
 )
 
 type AuthenticationController interface {
-	AuthenticateUser(w http.ResponseWriter, r *http.Request, email, password string) (*model.User, error)
+	AuthenticateUser(w http.ResponseWriter, r *http.Request, email, password string) (*response.UserResponse, error)
 	GetAuthenticUserID(r *http.Request) string
 }
 
@@ -23,7 +23,7 @@ func NewAuthenticationController(usecase usecase.AuthenticationUsecase) Authenti
 	}
 }
 
-func (c authenticationController) AuthenticateUser(w http.ResponseWriter, r *http.Request, email, password string) (*model.User, error) {
+func (c authenticationController) AuthenticateUser(w http.ResponseWriter, r *http.Request, email, password string) (*response.UserResponse, error) {
 	return c.usecase.AuthenticateUser(
 		request.NewAuthenticateUserRequest(w, r, email, password),
 	)

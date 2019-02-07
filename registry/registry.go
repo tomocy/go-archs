@@ -70,6 +70,7 @@ func (r registry) newUserController() controller.UserController {
 
 func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
 	return usecase.NewAuthenticationUsecase(
+		r.newAuthenticationUsecaseResponser(),
 		r.userRepository,
 		r.newHashService(),
 		r.newSessionService(),
@@ -91,6 +92,10 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 		r.newUserService(),
 		r.newHashService(),
 	)
+}
+
+func (r registry) newAuthenticationUsecaseResponser() response.AuthenticationUsecaseResponser {
+	return presenter.NewAuthenticationUsecaseResponser(r.newUserUsecaseResponser())
 }
 
 func (r registry) newTweetUsecaseResponser() response.TweetUsecaseResponser {

@@ -30,7 +30,7 @@ func (h authenticationHandler) AuthenticateUser(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	user, err := h.controller.AuthenticateUser(w, r, validated.Email, validated.Password)
+	resp, err := h.controller.AuthenticateUser(w, r, validated.Email, validated.Password)
 	if err != nil {
 		switch err.(type) {
 		case usecase.IncorrectCredentialError:
@@ -41,5 +41,5 @@ func (h authenticationHandler) AuthenticateUser(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	fmt.Fprintf(w, "authenticate user: {ID: %s, Eail: %s}\n", user.ID, user.Email)
+	fmt.Fprintf(w, "authenticate user: %v\n", resp)
 }
