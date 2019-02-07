@@ -3,6 +3,7 @@ package usecase
 import (
 	"testing"
 
+	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/infra/memory"
@@ -12,6 +13,7 @@ import (
 func TestRegisterUser(t *testing.T) {
 	repo := memory.NewUserRepository()
 	usecase := NewUserUsecase(
+		presenter.NewUserUsecaseResponser(),
 		repo,
 		service.NewUserService(repo, new(mockHashService)),
 		new(mockHashService),

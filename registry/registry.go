@@ -2,6 +2,7 @@ package registry
 
 import (
 	"github.com/tomocy/archs/adapter/controller"
+	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/domain/service"
 	"github.com/tomocy/archs/infra/bcrypt"
@@ -9,6 +10,7 @@ import (
 	"github.com/tomocy/archs/infra/session"
 	"github.com/tomocy/archs/infra/web/http/handler"
 	"github.com/tomocy/archs/usecase"
+	"github.com/tomocy/archs/usecase/response"
 )
 
 type Registry interface {
@@ -80,10 +82,15 @@ func (r registry) newTweetUsecase() usecase.TweetUsecase {
 
 func (r registry) newUserUsecase() usecase.UserUsecase {
 	return usecase.NewUserUsecase(
+		r.newUserUsecaseResponser(),
 		r.userRepository,
 		r.newUserService(),
 		r.newHashService(),
 	)
+}
+
+func (r registry) newUserUsecaseResponser() response.UserUsecaseResponser {
+	return presenter.NewUserUsecaseResponser()
 }
 
 func (r registry) newTweetRepository() repository.TweetRepository {

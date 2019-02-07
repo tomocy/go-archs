@@ -30,7 +30,7 @@ func (h userHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.controller.RegisterUser(validated.Email, validated.Password)
+	resp, err := h.controller.RegisterUser(validated.Email, validated.Password)
 	if err != nil {
 		switch err.(type) {
 		case usecase.DuplicatedEmailError:
@@ -41,5 +41,5 @@ func (h userHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "register user: {ID: %s, Email: %s}\n", user.ID, user.Email)
+	fmt.Fprintf(w, "register user: %v\n", resp)
 }

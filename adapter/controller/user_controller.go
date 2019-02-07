@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/usecase"
 	"github.com/tomocy/archs/usecase/request"
+	"github.com/tomocy/archs/usecase/response"
 )
 
 type UserController interface {
-	RegisterUser(email, password string) (*model.User, error)
+	RegisterUser(email, password string) (*response.UserResponse, error)
 }
 
 type userController struct {
@@ -20,7 +20,7 @@ func NewUserController(usecase usecase.UserUsecase) UserController {
 	}
 }
 
-func (c userController) RegisterUser(email, password string) (*model.User, error) {
+func (c userController) RegisterUser(email, password string) (*response.UserResponse, error) {
 	return c.usecase.RegisterUser(
 		request.NewRegisterUserRequest(email, password),
 	)
