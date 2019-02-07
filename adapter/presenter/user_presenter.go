@@ -12,6 +12,6 @@ func NewUserUsecaseResponser() response.UserUsecaseResponser {
 type userPresenter struct {
 }
 
-func (p userPresenter) ResponseUser(user *model.User) (*response.UserResponse, error) {
-	return response.NewUserResponse(string(user.ID), user.Email), nil
+func (p userPresenter) ResponseUser(user *model.User) *response.UserResponse {
+	return response.NewUserResponse(string(user.ID), user.Email)
 }

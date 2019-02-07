@@ -43,5 +43,5 @@ func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*response.U
 		return nil, fmt.Errorf("failed to register user: %s", err)
 	}
 
-	return u.responser.ResponseUser(user)
+	return u.responser.ResponseUser(user), nil
 }

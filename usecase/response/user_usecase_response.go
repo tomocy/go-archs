@@ -3,7 +3,7 @@ package response
 import "github.com/tomocy/archs/domain/model"
 
 type UserUsecaseResponser interface {
-	ResponseUser(user *model.User) (*UserResponse, error)
+	ResponseUser(user *model.User) *UserResponse
 }
 
 type UserResponse struct {
