@@ -2,15 +2,9 @@ package model
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type TweetID string
-
-func generateTweetID() TweetID {
-	return TweetID(uuid.New().String())
-}
 
 type Tweet struct {
 	ID        TweetID
@@ -19,9 +13,9 @@ type Tweet struct {
 	CreatedAt time.Time
 }
 
-func NewTweet(userID UserID, content string) *Tweet {
+func NewTweet(id TweetID, userID UserID, content string) *Tweet {
 	return &Tweet{
-		ID:        generateTweetID(),
+		ID:        id,
 		UserID:    userID,
 		Content:   content,
 		CreatedAt: time.Now(),

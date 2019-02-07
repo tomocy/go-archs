@@ -24,6 +24,6 @@ func NewUser(email, password string) *User {
 	}
 }
 
-func (u User) ComposeTweet(content string) *Tweet {
-	return NewTweet(u.ID, content)
+func (u User) ComposeTweet(id TweetID, content string) *Tweet {
+	return NewTweet(id, u.ID, content)
 }

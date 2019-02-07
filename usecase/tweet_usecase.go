@@ -34,7 +34,7 @@ func (u tweetUsecase) ComposeTweet(req *request.ComposeTweetRequest) (*model.Twe
 		return nil, newNoSuchUserError()
 	}
 
-	tweet := user.ComposeTweet(req.Content)
+	tweet := user.ComposeTweet(u.tweetRepository.NextID(), req.Content)
 	if err := u.tweetRepository.Save(tweet); err != nil {
 		return nil, fmt.Errorf("failed to compose tweet: %s", err)
 	}

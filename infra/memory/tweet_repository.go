@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"github.com/google/uuid"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/repository"
 )
@@ -17,6 +18,10 @@ type tweetRepository struct {
 
 func newTweetRepository() *tweetRepository {
 	return new(tweetRepository)
+}
+
+func (r tweetRepository) NextID() model.TweetID {
+	return model.TweetID(uuid.New().String())
 }
 
 func (r *tweetRepository) Save(tweet *model.Tweet) error {
