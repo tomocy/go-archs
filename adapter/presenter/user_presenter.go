@@ -1,17 +1,26 @@
 package presenter
 
-import (
-	"github.com/tomocy/archs/domain/model"
-	"github.com/tomocy/archs/usecase/response"
-)
+import "github.com/tomocy/archs/domain/model"
 
-func NewUserUsecaseResponser() response.UserUsecaseResponser {
+type UserPresenter interface {
+	PresentUser(user *model.User) *UserPresent
+}
+
+func NewUserPresenter() UserPresenter {
 	return new(userPresenter)
 }
 
 type userPresenter struct {
 }
 
-func (p userPresenter) ResponseUser(user *model.User) *response.UserResponse {
-	return response.NewUserResponse(string(user.ID), user.Email)
+type UserPresent struct {
+	ID    string
+	Email string
+}
+
+func (p userPresenter) PresentUser(user *model.User) *UserPresent {
+	return &UserPresent{
+		ID:    string(user.ID),
+		Email: user.Email,
+	}
 }

@@ -1,27 +1,30 @@
 package controller
 
 import (
+	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/usecase"
 	"github.com/tomocy/archs/usecase/request"
-	"github.com/tomocy/archs/usecase/response"
 )
 
 type UserController interface {
-	RegisterUser(email, password string) (*response.UserResponse, error)
+	RegisterUser(email, password string) (*presenter.UserPresent, error)
 }
 
 type userController struct {
-	usecase usecase.UserUsecase
+	presenter presenter.UserPresenter
+	usecase   usecase.UserUsecase
 }
 
-func NewUserController(usecase usecase.UserUsecase) UserController {
+func NewUserController(presenter presenter.UserPresenter, usecase usecase.UserUsecase) UserController {
 	return &userController{
-		usecase: usecase,
+		presenter: presenter,
+		usecase:   usecase,
 	}
 }
 
-func (c userController) RegisterUser(email, password string) (*response.UserResponse, error) {
-	return c.usecase.RegisterUser(
+func (c userController) RegisterUser(email, password string) (*presenter.UserPresent, error) {
+	user, err := c.usecase.RegisterUser(
 		request.NewRegisterUserRequest(email, password),
 	)
+	return c.presenter.PresentUser(user), err
 }

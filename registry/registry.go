@@ -68,11 +68,18 @@ func (r registry) newTweetController() controller.TweetController {
 }
 
 func (r registry) newUserController() controller.UserController {
-	return controller.NewUserController(r.newUserUsecase())
+	return controller.NewUserController(
+		r.newUserPresenter(),
+		r.newUserUsecase(),
+	)
 }
 
 func (r registry) newAuthenticationPresenter() presenter.AuthenticationPresenter {
 	return presenter.NewAuthenticationPresenter()
+}
+
+func (r registry) newUserPresenter() presenter.UserPresenter {
+	return presenter.NewUserPresenter()
 }
 
 func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
@@ -93,7 +100,6 @@ func (r registry) newTweetUsecase() usecase.TweetUsecase {
 
 func (r registry) newUserUsecase() usecase.UserUsecase {
 	return usecase.NewUserUsecase(
-		r.newUserUsecaseResponser(),
 		r.userRepository,
 		r.newUserService(),
 		r.newHashService(),
@@ -102,10 +108,6 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 
 func (r registry) newTweetUsecaseResponser() response.TweetUsecaseResponser {
 	return presenter.NewTweetUsecaseResponser()
-}
-
-func (r registry) newUserUsecaseResponser() response.UserUsecaseResponser {
-	return presenter.NewUserUsecaseResponser()
 }
 
 func (r registry) newTweetRepository() repository.TweetRepository {
