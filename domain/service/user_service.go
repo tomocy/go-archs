@@ -8,7 +8,7 @@ import (
 )
 
 type UserService interface {
-	RegisterUser(email, password string) (*model.User, error)
+	RegisterUser(id model.UserID, email, password string) (*model.User, error)
 }
 
 type userService struct {
@@ -23,7 +23,7 @@ func NewUserService(repo repository.UserRepository, hashService HashService) Use
 	}
 }
 
-func (s userService) RegisterUser(email, password string) (*model.User, error) {
+func (s userService) RegisterUser(id model.UserID, email, password string) (*model.User, error) {
 	if err := s.checkIfEmailIsUnique(email); err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (s userService) RegisterUser(email, password string) (*model.User, error) {
 		return nil, err
 	}
 
-	return model.NewUser(email, hash), nil
+	return model.NewUser(id, email, hash), nil
 }
 
 func (s userService) checkIfEmailIsUnique(email string) error {

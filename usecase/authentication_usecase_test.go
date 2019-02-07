@@ -15,8 +15,9 @@ func TestAuthenticateUser(t *testing.T) {
 		new(mockHashService),
 		new(mockSessionService),
 	)
+	userID := model.UserID("user id")
 	email := "test@test.com"
-	repo.Save(model.NewUser(email, mockHash))
+	repo.Save(model.NewUser(userID, email, mockHash))
 	tests := []struct {
 		name   string
 		tester func(t *testing.T)

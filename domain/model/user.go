@@ -1,14 +1,6 @@
 package model
 
-import (
-	"github.com/google/uuid"
-)
-
 type UserID string
-
-func generateUserID() UserID {
-	return UserID(uuid.New().String())
-}
 
 type User struct {
 	ID       UserID
@@ -16,9 +8,9 @@ type User struct {
 	Password string
 }
 
-func NewUser(email, password string) *User {
+func NewUser(id UserID, email, password string) *User {
 	return &User{
-		ID:       generateUserID(),
+		ID:       id,
 		Email:    email,
 		Password: password,
 	}

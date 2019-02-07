@@ -32,7 +32,7 @@ func NewUserUsecase(
 }
 
 func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*model.User, error) {
-	user, err := u.userService.RegisterUser(req.Email, req.Password)
+	user, err := u.userService.RegisterUser(u.repository.NextID(), req.Email, req.Password)
 	if err != nil {
 		return nil, newDuplicatedEmailError(req.Email)
 	}

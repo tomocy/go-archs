@@ -16,6 +16,7 @@ func TestRegisterUser(t *testing.T) {
 		service.NewUserService(repo, new(mockHashService)),
 		new(mockHashService),
 	)
+	userID := model.UserID("user id")
 	email := "test@test.com"
 	password := "plain"
 	req := request.NewRegisterUserRequest(email, password)
@@ -35,7 +36,7 @@ func TestRegisterUser(t *testing.T) {
 		{
 			"duplicated email",
 			func(t *testing.T) {
-				repo.Save(model.NewUser(email, password))
+				repo.Save(model.NewUser(userID, email, password))
 				_, err := usecase.RegisterUser(req)
 				if !IsDuplicatedEmailError(err) {
 					t.Errorf("unexpected error: got %s, but expected DuplicatedEmailError", err)

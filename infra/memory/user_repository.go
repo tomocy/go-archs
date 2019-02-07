@@ -3,6 +3,7 @@ package memory
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/repository"
 )
@@ -15,6 +16,10 @@ func NewUserRepository() repository.UserRepository {
 
 type userRepository struct {
 	users []*model.User
+}
+
+func (r userRepository) NextID() model.UserID {
+	return model.UserID(uuid.New().String())
 }
 
 func (r userRepository) Find(id model.UserID) (*model.User, error) {
