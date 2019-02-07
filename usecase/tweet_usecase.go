@@ -3,29 +3,35 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/usecase/request"
+	"github.com/tomocy/archs/usecase/response"
 )
 
 type TweetUsecase interface {
-	ComposeTweet(req *request.ComposeTweetRequest) (*model.Tweet, error)
+	ComposeTweet(req *request.ComposeTweetRequest) (*response.TweetResponse, error)
 	DeleteTweet(req *request.DeleteTweetRequest) error
 }
 
 type tweetUsecase struct {
+	responser       response.TweetUsecaseResponser
 	tweetRepository repository.TweetRepository
 	userRepository  repository.UserRepository
 }
 
-func NewTweetUsecase(tweetRepo repository.TweetRepository, userRepo repository.UserRepository) TweetUsecase {
+func NewTweetUsecase(
+	responser response.TweetUsecaseResponser,
+	tweetRepo repository.TweetRepository,
+	userRepo repository.UserRepository,
+) TweetUsecase {
 	return &tweetUsecase{
+		responser:       responser,
 		tweetRepository: tweetRepo,
 		userRepository:  userRepo,
 	}
 }
 
-func (u tweetUsecase) ComposeTweet(req *request.ComposeTweetRequest) (*model.Tweet, error) {
+func (u tweetUsecase) ComposeTweet(req *request.ComposeTweetRequest) (*response.TweetResponse, error) {
 	user, err := u.userRepository.Find(req.UserID)
 	if err != nil {
 		return nil, newNoSuchUserError()
@@ -36,7 +42,7 @@ func (u tweetUsecase) ComposeTweet(req *request.ComposeTweetRequest) (*model.Twe
 		return nil, fmt.Errorf("failed to compose tweet: %s", err)
 	}
 
-	return tweet, nil
+	return u.responser.ResponseTweet(tweet), nil
 }
 
 func (u tweetUsecase) DeleteTweet(req *request.DeleteTweetRequest) error {

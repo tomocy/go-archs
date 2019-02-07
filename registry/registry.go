@@ -77,7 +77,11 @@ func (r registry) newAuthenticationUsecase() usecase.AuthenticationUsecase {
 }
 
 func (r registry) newTweetUsecase() usecase.TweetUsecase {
-	return usecase.NewTweetUsecase(r.tweetRepository, r.userRepository)
+	return usecase.NewTweetUsecase(
+		r.newTweetUsecaseResponser(),
+		r.tweetRepository,
+		r.userRepository,
+	)
 }
 
 func (r registry) newUserUsecase() usecase.UserUsecase {
@@ -87,6 +91,10 @@ func (r registry) newUserUsecase() usecase.UserUsecase {
 		r.newUserService(),
 		r.newHashService(),
 	)
+}
+
+func (r registry) newTweetUsecaseResponser() response.TweetUsecaseResponser {
+	return presenter.NewTweetUsecaseResponser()
 }
 
 func (r registry) newUserUsecaseResponser() response.UserUsecaseResponser {

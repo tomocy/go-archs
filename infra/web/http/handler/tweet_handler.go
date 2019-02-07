@@ -33,7 +33,7 @@ func (h tweetHandler) ComposeTweet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tweet, err := h.controller.ComposeTweet(userID, validated.Content)
+	resp, err := h.controller.ComposeTweet(userID, validated.Content)
 	if err != nil {
 		switch err.(type) {
 		case usecase.NoSuchUserError:
@@ -44,7 +44,7 @@ func (h tweetHandler) ComposeTweet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "compose tweet: {ID: %s, UserID: %s, Content: %s}\n", tweet.ID, tweet.UserID, tweet.Content)
+	fmt.Fprintf(w, "compose resp: %v\n", resp)
 }
 
 func (h tweetHandler) DeleteTweet(w http.ResponseWriter, r *http.Request) {

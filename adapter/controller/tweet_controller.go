@@ -6,11 +6,12 @@ import (
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/usecase"
 	"github.com/tomocy/archs/usecase/request"
+	"github.com/tomocy/archs/usecase/response"
 )
 
 type TweetController interface {
 	GetAuthenticUserID(r *http.Request) string
-	ComposeTweet(userID, content string) (*model.Tweet, error)
+	ComposeTweet(userID, content string) (*response.TweetResponse, error)
 	DeleteTweet(tweetID string) error
 }
 
@@ -26,7 +27,7 @@ func NewTweetController(authController AuthenticationController, usecase usecase
 	}
 }
 
-func (c tweetController) ComposeTweet(userID, content string) (*model.Tweet, error) {
+func (c tweetController) ComposeTweet(userID, content string) (*response.TweetResponse, error) {
 	return c.usecase.ComposeTweet(
 		request.NewComposeTweetRequest(model.UserID(userID), content),
 	)
