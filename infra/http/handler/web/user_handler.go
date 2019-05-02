@@ -19,6 +19,11 @@ type userHandler struct {
 	usecase usecase.UserUsecase
 }
 
+func (h *userHandler) showRegistrationForm(w http.ResponseWriter, r *http.Request) {
+	presenter := webPresenter(h.view, w, r)
+	presenter.ShowUserRegistrationForm()
+}
+
 func (h *userHandler) registerUser(w http.ResponseWriter, r *http.Request) {
 	input, output := httpController(r), webPresenter(h.view, w, r)
 	h.usecase.RegisterUser(input, output)

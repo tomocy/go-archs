@@ -26,9 +26,7 @@ type Handler struct {
 }
 
 func (h *Handler) ShowUserRegistrationForm(w http.ResponseWriter, r *http.Request) {
-	if err := h.view.Show(w, "user.new", nil); err != nil {
-		logInternalServerError(w, "show user registration form", err)
-	}
+	h.userHandler.showRegistrationForm(w, r)
 }
 
 func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {

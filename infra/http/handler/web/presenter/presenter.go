@@ -25,6 +25,12 @@ type Presenter struct {
 	request    *http.Request
 }
 
+func (p *Presenter) ShowUserRegistrationForm() {
+	if err := p.view.Show(p.respWriter, "user.new", nil); err != nil {
+		logInternalServerError(p.respWriter, "show user registration form", err)
+	}
+}
+
 func (p *Presenter) OnUserRegistered(user *model.User) {
 	dest := fmt.Sprintf("%s/%s", route.Web.Route("user.show"), user.ID)
 	log.Printf("register user successfully: %v\n", user)
