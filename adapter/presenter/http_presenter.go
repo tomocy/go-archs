@@ -34,7 +34,7 @@ func (p *HTTPPresenter) OnUserRegistrationFailed(err error) {
 		log.Printf("input error was occured in user registration: %s\n", err)
 		// TODO: redirect to proper location with error message
 	default:
-		p.logInternalServerError("user registration", err)
+		p.logUnknownError("user registration", err)
 	}
 }
 
@@ -44,7 +44,7 @@ func (p *HTTPPresenter) OnUserFindingFailed(err error) {
 		log.Printf("input error was occured in user finding: %s\n", err)
 		p.respWriter.WriteHeader(http.StatusNotFound)
 	default:
-		p.logInternalServerError("user finding", err)
+		p.logUnknownError("user finding", err)
 	}
 }
 
@@ -52,7 +52,7 @@ func (p *HTTPPresenter) redirect(dest string) {
 	http.Redirect(p.respWriter, p.request, dest, http.StatusSeeOther)
 }
 
-func (p *HTTPPresenter) logInternalServerError(did string, err error) {
+func (p *HTTPPresenter) logUnknownError(did string, err error) {
 	log.Printf("failed to deal with unknown error in %s: %v\n", did, err)
 	p.respWriter.WriteHeader(http.StatusInternalServerError)
 }
