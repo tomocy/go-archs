@@ -21,6 +21,13 @@ type Server struct {
 }
 
 func (s *Server) ListenAndServe(addr string) error {
+	s.registerRoutes()
 	log.Printf("listen and serve on %s\n", addr)
 	return http.ListenAndServe(addr, s.router)
+}
+
+func (s *Server) registerRoutes() {
+	for _, r := range s.registerers {
+		r.RegisterRoutes(s.router)
+	}
 }
