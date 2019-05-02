@@ -1,8 +1,11 @@
 package registerer
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/tomocy/archs/infra/http/handler/web"
+	"github.com/tomocy/archs/infra/http/route"
 )
 
 func NewWebRegisterer(handler *web.Handler) *WebRegisterer {
@@ -16,5 +19,7 @@ type WebRegisterer struct {
 }
 
 func (r *WebRegisterer) RegisterRoutes(router chi.Router) {
+	router.Get("/*", http.FileServer(http.Dir("resource/public")).ServeHTTP)
+	router.Get(route.Web.Route("user.new").Path, r.handler.ShowUserRegistrationForm)
 	router.Post("/users", r.handler.RegisterUser)
 }
