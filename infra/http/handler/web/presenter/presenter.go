@@ -27,7 +27,7 @@ type Presenter struct {
 
 func (p *Presenter) ShowUserRegistrationForm() {
 	if err := p.view.Show(p.respWriter, "user.new", nil); err != nil {
-		logInternalServerError(p.respWriter, "show user registration form", err)
+		p.logInternalServerError("show user registration form", err)
 	}
 }
 
@@ -59,16 +59,12 @@ func (p *Presenter) redirect(dest string) {
 	http.Redirect(p.respWriter, p.request, dest, http.StatusSeeOther)
 }
 
-func (p *Presenter) logUnknownError(did string, err error) {
-	p.logInternalServerError("failed to deal with unknown error in %s: %v\n", did, err)
-}
-
-func (p *Presenter) logInternalServerError(format string, a ...interface{}) {
-	log.Printf(format, a...)
+func (p *Presenter) logInternalServerError(did string, msg interface{}) {
+	log.Printf("failed to %s: %v\n", did, msg)
 	p.respWriter.WriteHeader(http.StatusInternalServerError)
 }
 
-func logInternalServerError(w http.ResponseWriter, did string, msg interface{}) {
-	log.Printf("failed to %s: %v\n", did, msg)
-	w.WriteHeader(http.StatusInternalServerError)
+func (p *Presenter) logUnknownError(did string, err error) {
+	log.Printf("failed to deal with unknown error in %s: %v\n", did, err)
+	p.respWriter.WriteHeader(http.StatusInternalServerError)
 }

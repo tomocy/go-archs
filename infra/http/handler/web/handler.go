@@ -1,7 +1,6 @@
 package web
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
@@ -39,9 +38,4 @@ func httpController(r *http.Request) *controller.HTTPController {
 
 func webPresenter(view view.View, w http.ResponseWriter, r *http.Request) *presenter.Presenter {
 	return presenter.New(view, w, r)
-}
-
-func logInternalServerError(w http.ResponseWriter, did string, msg interface{}) {
-	log.Printf("failed to %s: %v\n", did, msg)
-	w.WriteHeader(http.StatusInternalServerError)
 }
