@@ -9,8 +9,8 @@ import (
 	"github.com/tomocy/sensei"
 )
 
-func SetError(w http.ResponseWriter, r *http.Request, err error) {
-	if err := manager.SetFlash(w, r, flashError, err); err != nil {
+func SetErrorMessage(w http.ResponseWriter, r *http.Request, msg string) {
+	if err := manager.SetFlash(w, r, flashError, msg); err != nil {
 		logError("set error", err)
 	}
 }
@@ -29,6 +29,17 @@ func GetErrorMessage(w http.ResponseWriter, r *http.Request) string {
 	}
 
 	return ""
+}
+
+func IsSessionValid(r *http.Request) bool {
+	_, err := manager.Session(r)
+	return err == nil
+}
+
+func DeleteSession(w http.ResponseWriter, r *http.Request) {
+	if err := manager.Delete(w, r); err != nil {
+		logError("delete session", err)
+	}
 }
 
 func logError(did string, err error) {
