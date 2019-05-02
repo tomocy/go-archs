@@ -9,9 +9,9 @@ type User struct {
 	Email    string
 	Password string
 
-	hasIDAllocated   bool
-	isPasswordHashed bool
-	isValidated      bool
+	hasIDAllocated    bool
+	hasPasswordHashed bool
+	isValidated       bool
 }
 
 func (u *User) AllocateID(id UserID) error {
@@ -36,7 +36,7 @@ func (u *User) HashPassword(service service.HashService) error {
 	}
 
 	u.Password = hash
-	u.isPasswordHashed = true
+	u.hasPasswordHashed = true
 
 	return nil
 }
@@ -54,7 +54,7 @@ func (u *User) ValidateSelf() error {
 	if isEmpty(u.Password) {
 		return errorf("user", "password is empty")
 	}
-	if !u.isPasswordHashed {
+	if !u.hasPasswordHashed {
 		return errorf("user", "password is not hashed")
 	}
 
