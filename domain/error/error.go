@@ -30,6 +30,16 @@ type ValidationError struct {
 	*baseError
 }
 
+func NewInternalError(format string, a ...interface{}) *InternalError {
+	return &InternalError{
+		baseError: newBaseError(statusInternal, format, a...),
+	}
+}
+
+type InternalError struct {
+	*baseError
+}
+
 func newBaseError(status status, format string, a ...interface{}) *baseError {
 	return &baseError{
 		status: status,
