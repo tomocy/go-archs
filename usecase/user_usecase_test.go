@@ -24,23 +24,22 @@ func TestRegisterUser(t *testing.T) {
 func testRegisterUserSuccessfully(t *testing.T) {
 	memory := db.NewMemory()
 	bcrypt := hash.NewBcrypt()
-	usecase := New(memory, bcrypt)
-	input := new(testInput)
-	output := &testOutput{t: t}
+	usecase, input, output := prepare(t, memory, bcrypt)
+
 	input.toRegisterUserTester = func() *model.User {
 		return &model.User{
 			Email:    "aiueo@aiueo.com",
 			Password: "aiueo",
 		}
 	}
-	output.onErrorTester = func(t *testing.T, err error) {
-		t.Fatalf("onError was called despite the fact that this test is expected to be success: %s\n", err)
-	}
+
+	output.expectToBeSuccess()
 	output.onUserRegisteredTester = func(t *testing.T, user *model.User) {
 		found, err := memory.FindUser(user.ID)
 		if err != nil {
 			t.Fatalf("failed to find user: %s\n", err)
 		}
+
 		assertUser(t, found, user)
 	}
 
