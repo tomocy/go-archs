@@ -1,0 +1,9 @@
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.create-btn {
+  width: 100%;
+  margin-bottom: 20px;
+}

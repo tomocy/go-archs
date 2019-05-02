@@ -3,51 +3,172 @@ package usecase
 import (
 	"testing"
 
+	"github.com/pkg/errors"
+	derr "github.com/tomocy/archs/domain/error"
 	"github.com/tomocy/archs/domain/model"
-	"github.com/tomocy/archs/domain/service"
-	"github.com/tomocy/archs/infra/memory"
-	"github.com/tomocy/archs/usecase/request"
+	"github.com/tomocy/archs/infra/db"
+	"github.com/tomocy/archs/infra/hash"
 )
 
 func TestRegisterUser(t *testing.T) {
-	repo := memory.NewUserRepository()
-	usecase := NewUserUsecase(
-		repo,
-		service.NewUserService(repo, new(mockHashService)),
-		new(mockHashService),
-	)
-	userID := model.UserID("user id")
-	email := "test@test.com"
-	password := "plain"
-	req := request.NewRegisterUserRequest(email, password)
 	tests := []struct {
 		name   string
 		tester func(t *testing.T)
 	}{
-		{
-			"normal",
-			func(t *testing.T) {
-				_, err := usecase.RegisterUser(req)
-				if err != nil {
-					t.Fatalf("unexpected error: %s\n", err)
-				}
-			},
-		},
-		{
-			"duplicated email",
-			func(t *testing.T) {
-				repo.Save(model.NewUser(userID, email, password))
-				_, err := usecase.RegisterUser(req)
-				if !IsDuplicatedEmailError(err) {
-					t.Errorf("unexpected error: got %s, but expected DuplicatedEmailError", err)
-				}
-			},
-		},
+		{"success", testRegisterUserSuccessfully},
+		{"fail bacause of empty email", testRegisterUserWithEmptyEmail},
+		{"fail bacause of empty password", testRegisterUserWithEmptyPassword},
+		{"fail bacause of duplicated email", testRegisterUserWithDuplicatedEmail},
 	}
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			test.tester(t)
-		})
+		t.Run(test.name, test.tester)
+	}
+}
+
+func testRegisterUserSuccessfully(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	input.toRegisterUserTester = func() *model.User {
+		return &model.User{
+			Email:    "aiueo@aiueo.com",
+			Password: "aiueo",
+		}
+	}
+
+	output.expectUserRegistrationToBeSuccess()
+	output.onUserRegisteredTester = func(t *testing.T, user *model.User) {
+		found, err := memory.FindUser(user.ID)
+		if err != nil {
+			t.Fatalf("failed to find user: %s\n", err)
+		}
+
+		assertUser(t, found, user)
+	}
+
+	usecase.RegisterUser(input, output)
+}
+
+func testRegisterUserWithEmptyEmail(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	input.toRegisterUserTester = func() *model.User {
+		return &model.User{
+			Email:    "",
+			Password: "aiueo",
+		}
+	}
+
+	output.expectInputErrorInUserRegistration()
+
+	usecase.RegisterUser(input, output)
+}
+
+func testRegisterUserWithEmptyPassword(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	input.toRegisterUserTester = func() *model.User {
+		return &model.User{
+			Email:    "aiueo@aiueo.com",
+			Password: "",
+		}
+	}
+
+	output.expectInputErrorInUserRegistration()
+
+	usecase.RegisterUser(input, output)
+}
+
+func testRegisterUserWithDuplicatedEmail(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	email := "aiueo@aiueo.com"
+	stored := &model.User{
+		Email: email,
+	}
+	memory.SaveUser(stored)
+
+	input.toRegisterUserTester = func() *model.User {
+		return &model.User{
+			Email:    email,
+			Password: "aiueo",
+		}
+	}
+
+	output.expectInputErrorInUserRegistration()
+
+	usecase.RegisterUser(input, output)
+}
+
+func (o *testOutput) expectUserRegistrationToBeSuccess() {
+	o.onUserRegistrationFailedTester = func(t *testing.T, err error) {
+		t.Fatalf("OnUserRegistrationFailed was called despite the fact that this test is expected to be success: %s\n", err)
+	}
+}
+
+func (o *testOutput) expectInputErrorInUserRegistration() {
+	o.onUserRegistrationFailedTester = func(t *testing.T, err error) {
+		cause := errors.Cause(err)
+		if !derr.InInput(cause) {
+			t.Errorf("unexpected error was returned instead of internal error: %T", cause)
+		}
+	}
+	o.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
+		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
+	}
+}
+
+func TestFindUser(t *testing.T) {
+	tests := []struct {
+		name   string
+		tester func(t *testing.T)
+	}{
+		{"success", testFindUserSuccessfully},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, test.tester)
+	}
+}
+
+func testFindUserSuccessfully(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	id := model.UserID("aiueo")
+	stored := &model.User{
+		ID: id,
+	}
+	memory.SaveUser(stored)
+
+	input.toFindUserTester = func() model.UserID {
+		return id
+	}
+
+	output.expectUserFindingToBeSuccess()
+	output.onUserFound = func(t *testing.T, user *model.User) {
+		found, err := memory.FindUser(user.ID)
+		if err != nil {
+			t.Fatalf("failed to find user: %s\n", err)
+		}
+
+		assertUser(t, found, user)
+	}
+
+	usecase.FindUser(input, output)
+}
+
+func (o *testOutput) expectUserFindingToBeSuccess() {
+	o.onUserFindingFailedTester = func(t *testing.T, err error) {
+		t.Fatalf("OnUserFindingFailed was called despite the fact that this test is expected to be success: %s\n", err)
 	}
 }

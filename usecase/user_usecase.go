@@ -3,42 +3,67 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/tomocy/archs/domain/model"
+	"github.com/pkg/errors"
 	"github.com/tomocy/archs/domain/repository"
 	"github.com/tomocy/archs/domain/service"
-	"github.com/tomocy/archs/usecase/request"
+	"github.com/tomocy/archs/usecase/input"
+	"github.com/tomocy/archs/usecase/output"
 )
 
 type UserUsecase interface {
-	RegisterUser(req *request.RegisterUserRequest) (*model.User, error)
+	RegisterUser(input input.RegisterUserInput, output output.RegisterUserOutput)
+	FindUser(input input.FindUserInput, output output.FindUserOutput)
+}
+
+func newUserUsecase(
+	repo repository.UserRepository,
+	hashServ service.HashService,
+) *userUsecase {
+	return &userUsecase{
+		repo:     repo,
+		hashServ: hashServ,
+	}
 }
 
 type userUsecase struct {
-	repository  repository.UserRepository
-	userService service.UserService
-	hashService service.HashService
+	repo     repository.UserRepository
+	hashServ service.HashService
 }
 
-func NewUserUsecase(
-	repo repository.UserRepository,
-	userService service.UserService,
-	hashService service.HashService,
-) UserUsecase {
-	return &userUsecase{
-		repository:  repo,
-		userService: userService,
-		hashService: hashService,
+func (u *userUsecase) registerUser(input input.RegisterUserInput, output output.RegisterUserOutput) {
+	user := input.ToRegisterUser()
+	if err := user.AllocateID(u.repo.NextUserID()); err != nil {
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
+		return
 	}
+	if err := user.HashPassword(u.hashServ); err != nil {
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
+		return
+	}
+	if err := user.ValidateSelf(); err != nil {
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
+		return
+	}
+
+	if err := u.repo.SaveUser(user); err != nil {
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
+		return
+	}
+
+	output.OnUserRegistered(user)
 }
 
-func (u userUsecase) RegisterUser(req *request.RegisterUserRequest) (*model.User, error) {
-	user, err := u.userService.RegisterUser(u.repository.NextID(), req.Email, req.Password)
+func (u *userUsecase) findUser(input input.FindUserInput, output output.FindUserOutput) {
+	id := input.ToFindUser()
+	user, err := u.repo.FindUser(id)
 	if err != nil {
-		return nil, newDuplicatedEmailError(req.Email)
-	}
-	if err := u.repository.Save(user); err != nil {
-		return nil, fmt.Errorf("failed to register user: %s", err)
+		output.OnUserFindingFailed(wrapError(err, "find user"))
+		return
 	}
 
-	return user, nil
+	output.OnUserFound(user)
+}
+
+func wrapError(err error, did string) error {
+	return errors.Wrap(err, fmt.Sprintf("failed to %s", did))
 }
