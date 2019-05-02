@@ -10,3 +10,8 @@ type RegisterUserOutput interface {
 	UsecaseOutput
 	OnUserRegistered(user *model.User)
 }
+
+type FindUserOutput interface {
+	UsecaseOutput
+	OnUserFound(user *model.User)
+}
