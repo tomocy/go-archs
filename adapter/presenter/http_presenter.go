@@ -53,7 +53,7 @@ func (p *HTTPPresenter) redirect(dest string) {
 	http.Redirect(p.respWriter, p.request, dest, http.StatusSeeOther)
 }
 
-func (p *HTTPPresenter) logInternalServerError(in string, err error) {
-	log.Printf("failed to deal with unknown error in %s: %v\n", in, err)
+func (p *HTTPPresenter) logInternalServerError(did string, err error) {
+	log.Printf("failed to deal with unknown error in %s: %v\n", did, err)
 	p.respWriter.WriteHeader(http.StatusInternalServerError)
 }
