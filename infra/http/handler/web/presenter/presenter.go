@@ -5,58 +5,56 @@ import (
 	"log"
 	"net/http"
 
+	derr "github.com/tomocy/archs/domain/error"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/http/route"
-	uerr "github.com/tomocy/archs/usecase/error"
 )
 
-func NewHTTPPresenter(w http.ResponseWriter, r *http.Request) *HTTPPresenter {
-	return &HTTPPresenter{
+func New(w http.ResponseWriter, r *http.Request) *Presenter {
+	return &Presenter{
 		respWriter: w,
 		request:    r,
 	}
 }
 
-type HTTPPresenter struct {
+type Presenter struct {
 	respWriter http.ResponseWriter
 	request    *http.Request
 }
 
-func (p *HTTPPresenter) OnUserRegistered(user *model.User) {
+func (p *Presenter) OnUserRegistered(user *model.User) {
 	dest := fmt.Sprintf("%s/%s", route.Web.Route("user.show"), user.ID)
 	log.Printf("register user successfully: %v\n", user)
 	p.redirect(dest)
 }
 
-func (p *HTTPPresenter) OnUserRegistrationFailed(err error) {
+func (p *Presenter) OnUserRegistrationFailed(err error) {
 	switch {
-	case uerr.InInput(err):
-		log.Printf("input error was occured in user registration: %s\n", err)
-		// TODO: redirect to proper location with error message
+	case derr.InInput(err):
+		p.redirect(route.Web.Route("user.new").String())
 	default:
 		p.logUnknownError("user registration", err)
 	}
 }
 
-func (p *HTTPPresenter) OnUserFindingFailed(err error) {
+func (p *Presenter) OnUserFindingFailed(err error) {
 	switch {
-	case uerr.InInput(err):
-		log.Printf("input error was occured in user finding: %s\n", err)
+	case derr.InInput(err):
 		p.respWriter.WriteHeader(http.StatusNotFound)
 	default:
 		p.logUnknownError("user finding", err)
 	}
 }
 
-func (p *HTTPPresenter) redirect(dest string) {
+func (p *Presenter) redirect(dest string) {
 	http.Redirect(p.respWriter, p.request, dest, http.StatusSeeOther)
 }
 
-func (p *HTTPPresenter) logUnknownError(did string, err error) {
+func (p *Presenter) logUnknownError(did string, err error) {
 	p.logInternalServerError("failed to deal with unknown error in %s: %v\n", did, err)
 }
 
-func (p *HTTPPresenter) logInternalServerError(format string, a ...interface{}) {
+func (p *Presenter) logInternalServerError(format string, a ...interface{}) {
 	log.Printf(format, a...)
 	p.respWriter.WriteHeader(http.StatusInternalServerError)
 }

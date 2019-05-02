@@ -17,6 +17,6 @@ type userHandler struct {
 }
 
 func (h *userHandler) registerUser(w http.ResponseWriter, r *http.Request) {
-	input, output := httpController(r), httpPresenter(w, r)
+	input, output := httpController(r), webPresenter(w, r)
 	h.usecase.RegisterUser(input, output)
 }

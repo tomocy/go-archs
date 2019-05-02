@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/tomocy/archs/adapter/controller"
-	"github.com/tomocy/archs/adapter/presenter"
+	"github.com/tomocy/archs/infra/http/handler/web/presenter"
 	"github.com/tomocy/archs/infra/http/view"
 	"github.com/tomocy/archs/usecase"
 )
@@ -39,8 +39,8 @@ func httpController(r *http.Request) *controller.HTTPController {
 	return controller.NewHTTPController(r)
 }
 
-func httpPresenter(w http.ResponseWriter, r *http.Request) *presenter.HTTPPresenter {
-	return presenter.NewHTTPPresenter(w, r)
+func webPresenter(w http.ResponseWriter, r *http.Request) *presenter.Presenter {
+	return presenter.New(w, r)
 }
 
 func logInternalServerError(w http.ResponseWriter, did string, msg interface{}) {
