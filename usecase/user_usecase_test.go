@@ -62,15 +62,7 @@ func testRegisterUserWithEmptyEmail(t *testing.T) {
 		}
 	}
 
-	output.onErrorTester = func(t *testing.T, err error) {
-		cause := errors.Cause(err)
-		if !derr.InInput(cause) {
-			t.Errorf("unexpected error was returned instead of internal error: %T", cause)
-		}
-	}
-	output.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
-		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
-	}
+	expectInputErrorInUserRegistration(output)
 
 	usecase.RegisterUser(input, output)
 }
@@ -87,6 +79,12 @@ func testRegisterUserWithEmptyPassword(t *testing.T) {
 		}
 	}
 
+	expectInputErrorInUserRegistration(output)
+
+	usecase.RegisterUser(input, output)
+}
+
+func expectInputErrorInUserRegistration(output *testOutput) {
 	output.onErrorTester = func(t *testing.T, err error) {
 		cause := errors.Cause(err)
 		if !derr.InInput(cause) {
@@ -96,8 +94,6 @@ func testRegisterUserWithEmptyPassword(t *testing.T) {
 	output.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
 		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
 	}
-
-	usecase.RegisterUser(input, output)
 }
 
 func TestFindUser(t *testing.T) {
