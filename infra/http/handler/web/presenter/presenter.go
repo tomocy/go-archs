@@ -8,16 +8,19 @@ import (
 	derr "github.com/tomocy/archs/domain/error"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/http/route"
+	"github.com/tomocy/archs/infra/http/view"
 )
 
-func New(w http.ResponseWriter, r *http.Request) *Presenter {
+func New(view view.View, w http.ResponseWriter, r *http.Request) *Presenter {
 	return &Presenter{
+		view:       view,
 		respWriter: w,
 		request:    r,
 	}
 }
 
 type Presenter struct {
+	view       view.View
 	respWriter http.ResponseWriter
 	request    *http.Request
 }
@@ -57,4 +60,9 @@ func (p *Presenter) logUnknownError(did string, err error) {
 func (p *Presenter) logInternalServerError(format string, a ...interface{}) {
 	log.Printf(format, a...)
 	p.respWriter.WriteHeader(http.StatusInternalServerError)
+}
+
+func logInternalServerError(w http.ResponseWriter, did string, msg interface{}) {
+	log.Printf("failed to %s: %v\n", did, msg)
+	w.WriteHeader(http.StatusInternalServerError)
 }

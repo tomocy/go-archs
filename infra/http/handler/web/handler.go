@@ -16,7 +16,7 @@ func New(
 ) *Handler {
 	return &Handler{
 		view:        view,
-		userHandler: newUserHandler(userUsecase),
+		userHandler: newUserHandler(view, userUsecase),
 	}
 }
 
@@ -39,8 +39,8 @@ func httpController(r *http.Request) *controller.HTTPController {
 	return controller.NewHTTPController(r)
 }
 
-func webPresenter(w http.ResponseWriter, r *http.Request) *presenter.Presenter {
-	return presenter.New(w, r)
+func webPresenter(view view.View, w http.ResponseWriter, r *http.Request) *presenter.Presenter {
+	return presenter.New(view, w, r)
 }
 
 func logInternalServerError(w http.ResponseWriter, did string, msg interface{}) {
