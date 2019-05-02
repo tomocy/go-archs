@@ -16,7 +16,7 @@ type User struct {
 
 func (u *User) AllocateID(id UserID) error {
 	if u.hasIDAllocated {
-		return errorf("allocate user id", "id is already allocated")
+		return developmentError("allocate user id", "id is already allocated")
 	}
 
 	u.ID = id
@@ -43,7 +43,7 @@ func (u *User) HashPassword(service service.HashService) error {
 
 func (u *User) ValidateSelf() error {
 	if !u.hasIDAllocated {
-		return errorf("validate user", "id is not allocated")
+		return developmentError("validate user", "id is not allocated")
 	}
 	if isEmpty(string(u.ID)) {
 		return validationError("validate user", "id is empty")
@@ -55,7 +55,7 @@ func (u *User) ValidateSelf() error {
 		return validationError("validate user", "password is empty")
 	}
 	if !u.hasPasswordHashed {
-		return errorf("validate user", "password is not hashed")
+		return developmentError("validate user", "password is not hashed")
 	}
 
 	u.isValidated = true

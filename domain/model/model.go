@@ -11,6 +11,10 @@ func validationError(did, msg string) *derr.ValidationError {
 	return derr.NewValidationError("failed to %s: %s", did, msg)
 }
 
+func developmentError(did, msg string) *derr.DevelopmentError {
+	return derr.NewDevelopmentError("for developer: failed to %s: %s", did, msg)
+}
+
 func errorf(did, msg string) error {
 	return fmt.Errorf("%s: %s", did, msg)
 }
