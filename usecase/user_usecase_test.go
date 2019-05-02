@@ -3,6 +3,8 @@ package usecase
 import (
 	"testing"
 
+	"github.com/pkg/errors"
+	derr "github.com/tomocy/archs/domain/error"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/db"
 	"github.com/tomocy/archs/infra/hash"
@@ -14,6 +16,7 @@ func TestRegisterUser(t *testing.T) {
 		tester func(t *testing.T)
 	}{
 		{"success", testRegisterUserSuccessfully},
+		{"fail bacause of empty password", testRegisterUserWithEmptyPassword},
 	}
 
 	for _, test := range tests {
@@ -41,6 +44,31 @@ func testRegisterUserSuccessfully(t *testing.T) {
 		}
 
 		assertUser(t, found, user)
+	}
+
+	usecase.RegisterUser(input, output)
+}
+
+func testRegisterUserWithEmptyPassword(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	input.toRegisterUserTester = func() *model.User {
+		return &model.User{
+			Email:    "aiueo@aiueo.com",
+			Password: "",
+		}
+	}
+
+	output.onErrorTester = func(t *testing.T, err error) {
+		cause := errors.Cause(err)
+		if !derr.InInput(cause) {
+			t.Errorf("unexpected error was returned instead of internal error: %T", cause)
+		}
+	}
+	output.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
+		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
 	}
 
 	usecase.RegisterUser(input, output)
