@@ -5,9 +5,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pkg/errors"
 	derr "github.com/tomocy/archs/domain/error"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/http/route"
+	"github.com/tomocy/archs/infra/http/session"
 	"github.com/tomocy/archs/infra/http/view"
 )
 
@@ -26,7 +28,9 @@ type Presenter struct {
 }
 
 func (p *Presenter) ShowUserRegistrationForm() {
-	if err := p.show("user.new", nil); err != nil {
+	if err := p.show("user.new", map[string]interface{}{
+		"Error": session.GetErrorMessage(p.respWriter, p.request),
+	}); err != nil {
 		p.logInternalServerError("show user registration form", err)
 	}
 }
@@ -38,20 +42,23 @@ func (p *Presenter) OnUserRegistered(user *model.User) {
 }
 
 func (p *Presenter) OnUserRegistrationFailed(err error) {
+	cause := errors.Cause(err)
 	switch {
-	case derr.InInput(err):
+	case derr.InInput(cause):
+		session.SetErrorMessage(p.respWriter, p.request, cause.Error())
 		p.redirect(route.Web.Route("user.new").String())
 	default:
-		p.logUnknownError("user registration", err)
+		p.logUnknownError("user registration", cause)
 	}
 }
 
 func (p *Presenter) OnUserFindingFailed(err error) {
+	cause := errors.Cause(err)
 	switch {
-	case derr.InInput(err):
+	case derr.InInput(cause):
 		p.respWriter.WriteHeader(http.StatusNotFound)
 	default:
-		p.logUnknownError("user finding", err)
+		p.logUnknownError("user finding", cause)
 	}
 }
 
