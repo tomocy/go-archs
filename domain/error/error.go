@@ -21,11 +21,9 @@ type internal interface {
 }
 
 func NewValidationError(format string, a ...interface{}) *ValidationError {
-	err := &ValidationError{
+	return &ValidationError{
 		baseError: newBaseError(statusInput, format, a...),
 	}
-
-	return err
 }
 
 type ValidationError struct {
