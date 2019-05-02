@@ -7,13 +7,16 @@ import (
 	"github.com/tomocy/archs/adapter/controller"
 	"github.com/tomocy/archs/adapter/presenter"
 	"github.com/tomocy/archs/infra/http/view"
+	"github.com/tomocy/archs/usecase"
 )
 
 func New(
 	view view.View,
+	userUsecase usecase.UserUsecase,
 ) *Handler {
 	return &Handler{
-		view: view,
+		view:        view,
+		userHandler: newUserHandler(userUsecase),
 	}
 }
 
