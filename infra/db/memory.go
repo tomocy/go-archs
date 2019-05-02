@@ -28,6 +28,21 @@ func (m *Memory) FindUser(id model.UserID) (*model.User, error) {
 }
 
 func (m *Memory) SaveUser(user *model.User) error {
+	if m.hasSameEmail(user.Email) {
+		return derr.NewValidationError("duplicated email")
+	}
+
 	m.users[user.ID] = user
+
 	return nil
+}
+
+func (m *Memory) hasSameEmail(email string) bool {
+	for _, stored := range m.users {
+		if stored.Email == email {
+			return true
+		}
+	}
+
+	return false
 }

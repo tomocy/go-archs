@@ -18,6 +18,7 @@ func TestRegisterUser(t *testing.T) {
 		{"success", testRegisterUserSuccessfully},
 		{"fail bacause of empty email", testRegisterUserWithEmptyEmail},
 		{"fail bacause of empty password", testRegisterUserWithEmptyPassword},
+		{"fail bacause of duplicated email", testRegisterUserWithDuplicatedEmail},
 	}
 
 	for _, test := range tests {
@@ -94,6 +95,29 @@ func expectInputErrorInUserRegistration(output *testOutput) {
 	output.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
 		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
 	}
+}
+
+func testRegisterUserWithDuplicatedEmail(t *testing.T) {
+	memory := db.NewMemory()
+	bcrypt := hash.NewBcrypt()
+	usecase, input, output := prepare(t, memory, bcrypt)
+
+	email := "aiueo@aiueo.com"
+	stored := &model.User{
+		Email: email,
+	}
+	memory.SaveUser(stored)
+
+	input.toRegisterUserTester = func() *model.User {
+		return &model.User{
+			Email:    email,
+			Password: "aiueo",
+		}
+	}
+
+	expectInputErrorInUserRegistration(output)
+
+	usecase.RegisterUser(input, output)
 }
 
 func TestFindUser(t *testing.T) {
