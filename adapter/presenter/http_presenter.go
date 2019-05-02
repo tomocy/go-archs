@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pkg/errors"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/http/route"
 	uerr "github.com/tomocy/archs/usecase/error"
@@ -24,21 +25,24 @@ type HTTPPresenter struct {
 
 func (p *HTTPPresenter) OnUserRegistered(user *model.User) {
 	dest := fmt.Sprintf("%s/%s", route.Web.Route("user.show"), user.ID)
+	log.Printf("register user successfully: %v\n", user)
 	p.redirect(dest)
 }
 
 func (p *HTTPPresenter) OnError(err error) {
+	cause := errors.Cause(err)
 	switch {
-	case uerr.InUserRegistration(err):
-		p.onUserRegistrationError(err)
+	case uerr.InUserRegistration(cause):
+		p.onUserRegistrationError(cause)
 	default:
-		p.logInternalServerError("unknown", err)
+		p.logInternalServerError("unknown", cause)
 	}
 }
 
 func (p *HTTPPresenter) onUserRegistrationError(err error) {
 	switch {
 	case uerr.InInput(err):
+		log.Printf("input error was occured in user registration: %s\n", err)
 		// TODO: redirect to proper location with error message
 	default:
 		p.logInternalServerError("user registration", err)
