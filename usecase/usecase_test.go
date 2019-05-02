@@ -23,15 +23,10 @@ func (i *testInput) ToFindUser() model.UserID {
 
 type testOutput struct {
 	t                              *testing.T
-	onErrorTester                  func(t *testing.T, err error)
 	onUserRegistrationFailedTester func(t *testing.T, err error)
 	onUserRegisteredTester         func(t *testing.T, user *model.User)
 	onUserFindingFailedTester      func(t *testing.T, err error)
 	onUserFound                    func(t *testing.T, user *model.User)
-}
-
-func (o *testOutput) OnError(err error) {
-	o.onErrorTester(o.t, err)
 }
 
 func (o *testOutput) OnUserRegistrationFailed(err error) {
@@ -48,12 +43,6 @@ func (o *testOutput) OnUserFindingFailed(err error) {
 
 func (o *testOutput) OnUserFound(user *model.User) {
 	o.onUserFound(o.t, user)
-}
-
-func (o *testOutput) expectToBeSuccess() {
-	o.onErrorTester = func(t *testing.T, err error) {
-		t.Fatalf("onError was called despite the fact that this test is expected to be success: %s\n", err)
-	}
 }
 
 func (o *testOutput) expectUserRegistrationToBeSuccess() {
