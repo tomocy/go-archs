@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/tomocy/archs/domain/model"
 	"github.com/tomocy/archs/infra/http/route"
 	uerr "github.com/tomocy/archs/usecase/error"
@@ -27,14 +26,6 @@ func (p *HTTPPresenter) OnUserRegistered(user *model.User) {
 	dest := fmt.Sprintf("%s/%s", route.Web.Route("user.show"), user.ID)
 	log.Printf("register user successfully: %v\n", user)
 	p.redirect(dest)
-}
-
-func (p *HTTPPresenter) OnError(err error) {
-	cause := errors.Cause(err)
-	switch {
-	default:
-		p.logInternalServerError("unknown", cause)
-	}
 }
 
 func (p *HTTPPresenter) OnUserRegistrationFailed(err error) {
