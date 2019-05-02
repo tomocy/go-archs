@@ -148,7 +148,7 @@ func testFindUserSuccessfully(t *testing.T) {
 		return id
 	}
 
-	output.expectToBeSuccess()
+	output.expectUserFindingToBeSuccess()
 	output.onUserFound = func(t *testing.T, user *model.User) {
 		found, err := memory.FindUser(user.ID)
 		if err != nil {

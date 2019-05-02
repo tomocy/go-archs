@@ -47,6 +47,16 @@ func (p *HTTPPresenter) OnUserRegistrationFailed(err error) {
 	}
 }
 
+func (p *HTTPPresenter) OnUserFindingFailed(err error) {
+	switch {
+	case uerr.InInput(err):
+		log.Printf("input error was occured in user finding: %s\n", err)
+		p.respWriter.WriteHeader(http.StatusNotFound)
+	default:
+		p.logInternalServerError("user finding", err)
+	}
+}
+
 func (p *HTTPPresenter) redirect(dest string) {
 	http.Redirect(p.respWriter, p.request, dest, http.StatusSeeOther)
 }

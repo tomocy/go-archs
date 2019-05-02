@@ -57,7 +57,7 @@ func (u *userUsecase) findUser(input input.FindUserInput, output output.FindUser
 	id := input.ToFindUser()
 	user, err := u.repo.FindUser(id)
 	if err != nil {
-		output.OnError(wrapError(err, "find user"))
+		output.OnUserFindingFailed(wrapError(err, "find user"))
 		return
 	}
 

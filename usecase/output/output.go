@@ -12,6 +12,6 @@ type RegisterUserOutput interface {
 }
 
 type FindUserOutput interface {
-	UsecaseOutput
 	OnUserFound(user *model.User)
+	OnUserFindingFailed(err error)
 }
