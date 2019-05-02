@@ -1,0 +1,18 @@
+{{ define "css" }}
+<link rel="stylesheet" href="/css/common.css">
+{{ end }}
+
+{{ define "content" }}
+<div class="middle">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-8 col-md-7 col-lg-5 card">
+                <div class="card-body">
+                    <h1 class="card-title">Your email</h1>
+                    <p class="card-text">{{ .User.Email }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
