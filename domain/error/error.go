@@ -30,13 +30,13 @@ type ValidationError struct {
 	*baseError
 }
 
-func NewInternalError(format string, a ...interface{}) *InternalError {
-	return &InternalError{
+func NewDevelopmentError(format string, a ...interface{}) *DevelopmentError {
+	return &DevelopmentError{
 		baseError: newBaseError(statusInternal, format, a...),
 	}
 }
 
-type InternalError struct {
+type DevelopmentError struct {
 	*baseError
 }
 
