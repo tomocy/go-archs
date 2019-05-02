@@ -45,18 +45,6 @@ func (o *testOutput) OnUserFound(user *model.User) {
 	o.onUserFound(o.t, user)
 }
 
-func (o *testOutput) expectUserRegistrationToBeSuccess() {
-	o.onUserRegistrationFailedTester = func(t *testing.T, err error) {
-		t.Fatalf("OnUserRegistrationFailed was called despite the fact that this test is expected to be success: %s\n", err)
-	}
-}
-
-func (o *testOutput) expectUserFindingToBeSuccess() {
-	o.onUserFindingFailedTester = func(t *testing.T, err error) {
-		t.Fatalf("OnUserFindingFailed was called despite the fact that this test is expected to be success: %s\n", err)
-	}
-}
-
 func prepare(
 	t *testing.T,
 	memory *db.Memory,

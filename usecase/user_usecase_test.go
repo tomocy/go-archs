@@ -63,7 +63,7 @@ func testRegisterUserWithEmptyEmail(t *testing.T) {
 		}
 	}
 
-	expectInputErrorInUserRegistration(output)
+	output.expectInputErrorInUserRegistration()
 
 	usecase.RegisterUser(input, output)
 }
@@ -80,21 +80,9 @@ func testRegisterUserWithEmptyPassword(t *testing.T) {
 		}
 	}
 
-	expectInputErrorInUserRegistration(output)
+	output.expectInputErrorInUserRegistration()
 
 	usecase.RegisterUser(input, output)
-}
-
-func expectInputErrorInUserRegistration(output *testOutput) {
-	output.onUserRegistrationFailedTester = func(t *testing.T, err error) {
-		cause := errors.Cause(err)
-		if !derr.InInput(cause) {
-			t.Errorf("unexpected error was returned instead of internal error: %T", cause)
-		}
-	}
-	output.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
-		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
-	}
 }
 
 func testRegisterUserWithDuplicatedEmail(t *testing.T) {
@@ -115,9 +103,27 @@ func testRegisterUserWithDuplicatedEmail(t *testing.T) {
 		}
 	}
 
-	expectInputErrorInUserRegistration(output)
+	output.expectInputErrorInUserRegistration()
 
 	usecase.RegisterUser(input, output)
+}
+
+func (o *testOutput) expectUserRegistrationToBeSuccess() {
+	o.onUserRegistrationFailedTester = func(t *testing.T, err error) {
+		t.Fatalf("OnUserRegistrationFailed was called despite the fact that this test is expected to be success: %s\n", err)
+	}
+}
+
+func (o *testOutput) expectInputErrorInUserRegistration() {
+	o.onUserRegistrationFailedTester = func(t *testing.T, err error) {
+		cause := errors.Cause(err)
+		if !derr.InInput(cause) {
+			t.Errorf("unexpected error was returned instead of internal error: %T", cause)
+		}
+	}
+	o.onUserRegisteredTester = func(t *testing.T, _ *model.User) {
+		t.Fatalf("OnUserRegistered was called despite the fact that this test is not expected to be success")
+	}
 }
 
 func TestFindUser(t *testing.T) {
@@ -159,4 +165,10 @@ func testFindUserSuccessfully(t *testing.T) {
 	}
 
 	usecase.FindUser(input, output)
+}
+
+func (o *testOutput) expectUserFindingToBeSuccess() {
+	o.onUserFindingFailedTester = func(t *testing.T, err error) {
+		t.Fatalf("OnUserFindingFailed was called despite the fact that this test is expected to be success: %s\n", err)
+	}
 }
