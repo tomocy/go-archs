@@ -9,18 +9,18 @@ type User struct {
 	Email    string
 	Password string
 
-	isIDAllocated    bool
+	hasIDAllocated   bool
 	isPasswordHashed bool
 	isValidated      bool
 }
 
 func (u *User) AllocateID(id UserID) error {
-	if u.isIDAllocated {
+	if u.hasIDAllocated {
 		return errorf("user", "id is already allocated")
 	}
 
 	u.ID = id
-	u.isIDAllocated = true
+	u.hasIDAllocated = true
 
 	return nil
 }
@@ -42,7 +42,7 @@ func (u *User) HashPassword(service service.HashService) error {
 }
 
 func (u *User) ValidateSelf() error {
-	if !u.isIDAllocated {
+	if !u.hasIDAllocated {
 		return errorf("user", "id is not allocated")
 	}
 	if isEmpty(string(u.ID)) {
