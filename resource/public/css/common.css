@@ -12,3 +12,8 @@ body {
   top: 50%;
   transform: translateY(-50%);
 }
+
+.error {
+  color: #e01e5a;
+  word-break: break-word;
+}

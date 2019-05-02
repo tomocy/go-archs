@@ -25,7 +25,10 @@ func (v *HTMLView) mustParseTemplates() {
 	var err error
 	v.caster, err = caster.New(
 		&caster.TemplateSet{
-			Filenames: []string{htmlTemplate("master.html")},
+			Filenames: []string{
+				htmlTemplate("master.html"),
+				htmlTemplate("error.html"),
+			},
 		},
 	)
 	if err != nil {
