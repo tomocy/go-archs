@@ -33,7 +33,11 @@ func (v *HTMLView) mustParseTemplates() {
 	}
 
 	if err := v.caster.ExtendAll(
-		map[string]*caster.TemplateSet{},
+		map[string]*caster.TemplateSet{
+			"user.new": &caster.TemplateSet{
+				Filenames: []string{htmlTemplate("user/new.html")},
+			},
+		},
 	); err != nil {
 		panic(err)
 	}
