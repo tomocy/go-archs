@@ -1,8 +1,7 @@
 package db
 
 import (
-	"errors"
-
+	derr "github.com/tomocy/archs/domain/error"
 	"github.com/tomocy/archs/domain/model"
 )
 
@@ -25,7 +24,7 @@ func (m *Memory) FindUser(id model.UserID) (*model.User, error) {
 		return stored, nil
 	}
 
-	return nil, errors.New("no such user")
+	return nil, derr.NewValidationError("no such user")
 }
 
 func (m *Memory) SaveUser(user *model.User) error {
