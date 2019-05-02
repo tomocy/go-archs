@@ -17,7 +17,8 @@ var (
 
 var (
 	webRaw = route.RawMap{
-		"user.new": "/users/new",
+		"user.new":    "/users/new",
+		"user.create": "/users",
 	}
 )
 
