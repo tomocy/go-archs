@@ -9,6 +9,7 @@ type User struct {
 
 	isIDAllocated    bool
 	isPasswordHashed bool
+	isValidated      bool
 }
 
 func (u *User) AllocateID(id UserID) error {
@@ -39,5 +40,11 @@ func (u *User) ValidateSelf() error {
 		return errorf("user", "password is not hashed")
 	}
 
+	u.isValidated = true
+
 	return nil
+}
+
+func (u *User) IsValidated() bool {
+	return u.isValidated
 }
