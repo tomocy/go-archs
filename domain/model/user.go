@@ -1,5 +1,7 @@
 package model
 
+import "github.com/tomocy/archs/domain/service"
+
 type UserID string
 
 type User struct {
@@ -19,6 +21,22 @@ func (u *User) AllocateID(id UserID) error {
 
 	u.ID = id
 	u.isIDAllocated = true
+
+	return nil
+}
+
+func (u *User) HashPassword(service service.HashService) error {
+	plain := u.Password
+	if isEmpty(plain) {
+		return errorf("user", "password is empty")
+	}
+	hash, err := service.Hash(plain)
+	if err != nil {
+		return err
+	}
+
+	u.Password = hash
+	u.isPasswordHashed = true
 
 	return nil
 }
