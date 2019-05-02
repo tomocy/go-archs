@@ -13,12 +13,11 @@ import (
 func main() {
 	config.Must(config.LoadConfig("./config.yml"))
 
-	addr := config.Current.Addr
-	route.MapRoutes(addr)
+	route.MapRoutes(config.Current.Host, config.Current.Port)
 	registry := registry.NewHTTPRegistry()
 	webRegi := registerer.NewWebRegisterer(registry.NewWebHandler())
 	server := server.New(webRegi)
-	if err := server.ListenAndServe(addr); err != nil {
+	if err := server.ListenAndServe(":" + config.Current.Port); err != nil {
 		log.Fatalf("failed to listen and serve: %s\n", err)
 	}
 }

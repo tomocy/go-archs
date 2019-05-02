@@ -5,7 +5,8 @@ import "github.com/spf13/viper"
 var Current *Config
 
 type Config struct {
-	Addr string
+	Host string
+	Port string
 }
 
 func Must(err error) {
