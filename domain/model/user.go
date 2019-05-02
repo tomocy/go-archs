@@ -3,13 +3,29 @@ package model
 type UserID string
 
 type User struct {
-	ID               UserID
-	Email            string
+	ID       UserID
+	Email    string
+	Password string
+
+	isIDAllocated    bool
 	isPasswordHashed bool
-	Password         string
+}
+
+func (u *User) AllocateID(id UserID) error {
+	if u.isIDAllocated {
+		return errorf("user", "id is already allocated")
+	}
+
+	u.ID = id
+	u.isIDAllocated = true
+
+	return nil
 }
 
 func (u *User) ValidateSelf() error {
+	if !u.isIDAllocated {
+		return errorf("user", "id is not allocated")
+	}
 	if isEmpty(string(u.ID)) {
 		return errorf("user", "id is empty")
 	}
