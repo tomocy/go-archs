@@ -28,8 +28,9 @@ func (u *User) AllocateID(id UserID) error {
 func (u *User) HashPassword(service service.HashService) error {
 	plain := u.Password
 	if isEmpty(plain) {
-		return validationError("validate user", "password is empty")
+		return validationError("hash user password", "password is empty")
 	}
+
 	hash, err := service.Hash(plain)
 	if err != nil {
 		return err
