@@ -23,10 +23,10 @@ func (i *testInput) ToFindUser() model.UserID {
 
 type testOutput struct {
 	t                              *testing.T
-	onUserRegistrationFailedTester func(t *testing.T, err error)
 	onUserRegisteredTester         func(t *testing.T, user *model.User)
-	onUserFindingFailedTester      func(t *testing.T, err error)
+	onUserRegistrationFailedTester func(t *testing.T, err error)
 	onUserFound                    func(t *testing.T, user *model.User)
+	onUserFindingFailedTester      func(t *testing.T, err error)
 }
 
 func (o *testOutput) OnUserRegistrationFailed(err error) {
