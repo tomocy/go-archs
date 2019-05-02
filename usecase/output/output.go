@@ -7,8 +7,8 @@ type UsecaseOutput interface {
 }
 
 type RegisterUserOutput interface {
-	UsecaseOutput
 	OnUserRegistered(user *model.User)
+	OnUserRegistrationFailed(err error)
 }
 
 type FindUserOutput interface {

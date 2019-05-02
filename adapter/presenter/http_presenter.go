@@ -32,14 +32,12 @@ func (p *HTTPPresenter) OnUserRegistered(user *model.User) {
 func (p *HTTPPresenter) OnError(err error) {
 	cause := errors.Cause(err)
 	switch {
-	case uerr.InUserRegistration(cause):
-		p.onUserRegistrationError(cause)
 	default:
 		p.logInternalServerError("unknown", cause)
 	}
 }
 
-func (p *HTTPPresenter) onUserRegistrationError(err error) {
+func (p *HTTPPresenter) OnUserRegistrationFailed(err error) {
 	switch {
 	case uerr.InInput(err):
 		log.Printf("input error was occured in user registration: %s\n", err)

@@ -22,14 +22,19 @@ func (i *testInput) ToFindUser() model.UserID {
 }
 
 type testOutput struct {
-	t                      *testing.T
-	onErrorTester          func(t *testing.T, err error)
-	onUserRegisteredTester func(t *testing.T, user *model.User)
-	onUserFound            func(t *testing.T, user *model.User)
+	t                              *testing.T
+	onErrorTester                  func(t *testing.T, err error)
+	onUserRegistrationFailedTester func(t *testing.T, err error)
+	onUserRegisteredTester         func(t *testing.T, user *model.User)
+	onUserFound                    func(t *testing.T, user *model.User)
 }
 
 func (o *testOutput) OnError(err error) {
 	o.onErrorTester(o.t, err)
+}
+
+func (o *testOutput) OnUserRegistrationFailed(err error) {
+	o.onUserRegistrationFailedTester(o.t, err)
 }
 
 func (o *testOutput) OnUserRegistered(user *model.User) {
@@ -43,6 +48,12 @@ func (o *testOutput) OnUserFound(user *model.User) {
 func (o *testOutput) expectToBeSuccess() {
 	o.onErrorTester = func(t *testing.T, err error) {
 		t.Fatalf("onError was called despite the fact that this test is expected to be success: %s\n", err)
+	}
+}
+
+func (o *testOutput) expectUserRegistrationToBeSuccess() {
+	o.onUserRegistrationFailedTester = func(t *testing.T, err error) {
+		t.Fatalf("OnUserRegistrationFailed was called despite the fact that this test is expected to be success: %s\n", err)
 	}
 }
 

@@ -33,20 +33,20 @@ type userUsecase struct {
 func (u *userUsecase) registerUser(input input.RegisterUserInput, output output.RegisterUserOutput) {
 	user := input.ToRegisterUser()
 	if err := user.AllocateID(u.repo.NextUserID()); err != nil {
-		output.OnError(wrapError(err, "register user"))
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
 		return
 	}
 	if err := user.HashPassword(u.hashServ); err != nil {
-		output.OnError(wrapError(err, "register user"))
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
 		return
 	}
 	if err := user.ValidateSelf(); err != nil {
-		output.OnError(wrapError(err, "register user"))
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
 		return
 	}
 
 	if err := u.repo.SaveUser(user); err != nil {
-		output.OnError(wrapError(err, "register user"))
+		output.OnUserRegistrationFailed(wrapError(err, "register user"))
 		return
 	}
 

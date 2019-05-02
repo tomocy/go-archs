@@ -38,7 +38,7 @@ func testRegisterUserSuccessfully(t *testing.T) {
 		}
 	}
 
-	output.expectToBeSuccess()
+	output.expectUserRegistrationToBeSuccess()
 	output.onUserRegisteredTester = func(t *testing.T, user *model.User) {
 		found, err := memory.FindUser(user.ID)
 		if err != nil {
@@ -86,7 +86,7 @@ func testRegisterUserWithEmptyPassword(t *testing.T) {
 }
 
 func expectInputErrorInUserRegistration(output *testOutput) {
-	output.onErrorTester = func(t *testing.T, err error) {
+	output.onUserRegistrationFailedTester = func(t *testing.T, err error) {
 		cause := errors.Cause(err)
 		if !derr.InInput(cause) {
 			t.Errorf("unexpected error was returned instead of internal error: %T", cause)
