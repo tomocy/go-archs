@@ -13,6 +13,7 @@ import (
 
 type UserUsecase interface {
 	RegisterUser(input input.RegisterUserInput, output output.RegisterUserOutput)
+	FindUser(input input.FindUserInput, output output.FindUserOutput)
 }
 
 func newUserUsecase(
@@ -61,6 +62,20 @@ func (u *userUsecase) registerUser(input input.RegisterUserInput, output output.
 	}
 
 	output.OnUserRegistered(user)
+}
+
+func (u *userUsecase) findUser(input input.FindUserInput, output output.FindUserOutput) {
+	id := input.ToFindUser()
+	user, err := u.repo.FindUser(id)
+	if err != nil {
+		// TODO: switch on error
+		output.OnError(
+			wrapValidationError(uerr.KindUserRegistration, "find user", err),
+		)
+		return
+	}
+
+	output.OnUserFound(user)
 }
 
 func wrapValidationError(kind uerr.Kind, did string, err error) error {

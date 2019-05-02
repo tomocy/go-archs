@@ -23,3 +23,7 @@ type Usecase struct {
 func (u *Usecase) RegisterUser(input input.RegisterUserInput, output output.RegisterUserOutput) {
 	u.userUsecase.registerUser(input, output)
 }
+
+func (u *Usecase) FindUser(input input.FindUserInput, output output.FindUserOutput) {
+	u.userUsecase.findUser(input, output)
+}
