@@ -28,9 +28,7 @@ type Presenter struct {
 }
 
 func (p *Presenter) ShowUserRegistrationForm() {
-	if err := p.show("user.new", map[string]interface{}{
-		"Error": session.GetErrorMessage(p.respWriter, p.request),
-	}); err != nil {
+	if err := p.showWitDefaults("user.new", nil); err != nil {
 		p.logInternalServerError("show user registration form", err)
 	}
 }
@@ -60,6 +58,15 @@ func (p *Presenter) OnUserFindingFailed(err error) {
 	default:
 		p.logUnknownError("user finding", cause)
 	}
+}
+
+func (p *Presenter) showWitDefaults(name string, data map[string]interface{}) error {
+	if data == nil {
+		data = make(map[string]interface{})
+	}
+	data["Error"] = session.GetErrorMessage(p.respWriter, p.request)
+
+	return p.show(name, data)
 }
 
 func (p *Presenter) show(name string, data interface{}) error {
