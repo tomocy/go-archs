@@ -3,7 +3,7 @@ package registry
 import (
 	"github.com/tomocy/archs/infra/db"
 	"github.com/tomocy/archs/infra/hash"
-	"github.com/tomocy/archs/infra/http/handler/web"
+	"github.com/tomocy/archs/infra/http/handler/web/handler"
 	"github.com/tomocy/archs/infra/http/view"
 	"github.com/tomocy/archs/usecase"
 )
@@ -29,6 +29,6 @@ type HTTPRegistry struct {
 	usecase *usecase.Usecase
 }
 
-func (r *HTTPRegistry) NewWebHandler() *web.Handler {
-	return web.New(r.view, r.usecase)
+func (r *HTTPRegistry) NewWebHandler() *handler.Handler {
+	return handler.New(r.view, r.usecase)
 }
